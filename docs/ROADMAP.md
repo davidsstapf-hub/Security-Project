@@ -28,3 +28,17 @@
 - Add backup/export controls for learner data.
 - Complete security, privacy, and deployment reviews.
 
+## Five-tier curriculum delivery
+
+- [x] Tier 1 — Foundations
+- [x] Tier 2 — Systems & Threats
+- [x] Tier 3 — Secure Architecture and resilient-architecture lab
+- [x] Tier 4 — Security Operations and staged investigation
+- [x] Tier 5 — Governance, cross-domain scenario, and timed practice exam
+- [ ] Verify all mappings against the latest official SY0-701 objectives
+- [ ] Complete technical/editorial content review
+- [x] Add automated accessibility and responsive-layout validation
+- [x] Add versioned learner-data export/import
+- [x] Document local-data security and privacy behavior
+- [ ] Complete manual screen-reader and keyboard validation
+- [ ] Run real-learner validation

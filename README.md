@@ -58,7 +58,7 @@ Security+Project/
 
 ## Current status
 
-The guided learning app is implemented with React and Vite. Tier 1 now contains six complete learning sections, worked scenarios, 85+ flashcards, coached knowledge checks, section quizzes, and a 20-question cumulative checkpoint. The app also includes review-aware recommendations, versioned device-local progress, domain coverage, mobile-safe layouts, and Capacitor configuration for the future iOS app.
+The complete five-tier guided curriculum is implemented with React and Vite. Every tier contains six learning sections, scenario practice, flashcards, coached knowledge checks, section quizzes, and a 20-question cumulative checkpoint. Tiers 3 and 4 add applied architecture and investigation labs; Tier 5 adds a cross-domain scenario and configurable timed practice exam. Review-aware recommendations, versioned device-local progress, domain scoring, mobile-safe layouts, and Capacitor configuration are included.
 
 ## Run locally
 
@@ -69,7 +69,7 @@ npm run dev
 
 Then open `http://127.0.0.1:5173`.
 
-Run automated checks with `npm test` and create a production bundle with `npm run build`.
+Run unit and curriculum-integrity checks with `npm test`, browser accessibility and responsive checks with `npm run test:e2e`, or the complete release suite with `npm run validate`.
 
 ## iOS direction
 
@@ -77,7 +77,7 @@ The project uses Capacitor to package the same React app for iOS. Native project
 
 ## Recommended next milestone
 
-Validate the complete Tier 1 learning loop with real learners, address usability findings, and then author Tier 2 using the same section structure and content-integrity tests.
+Complete technical and editorial review against the latest official SY0-701 objectives, then validate each tier with real learners in order. Record confusing explanations, difficulty spikes, navigation friction, and mobile/accessibility findings before release.
 
 ## Content and ethics
 

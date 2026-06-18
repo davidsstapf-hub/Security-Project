@@ -30,7 +30,7 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import { domains, getActivity, getTier, tiers } from '../content/studyData.js'
+import { allActivities, domains, getActivity, getTier, tiers } from '../content/studyData.js'
 import { getDomainCoverage, getModuleProgress, getOverallProgress, getReadiness, getRecommendation, getTierProgress, moduleNeedsReview } from '../lib/learningLogic.js'
 import { progressRepository } from '../lib/progressRepository.js'
 import { ActivityView as LearningActivityView } from '../features/learn/LearningActivities.jsx'
@@ -43,12 +43,12 @@ const navItems = [
   { id: 'study-guide', label: 'How to study', icon: GraduationCap },
 ]
 
-const typeLabels = { lesson: 'Lesson', flashcards: 'Flashcards', quiz: 'Knowledge check', checkpoint: 'Tier checkpoint' }
+const typeLabels = { lesson: 'Lesson', flashcards: 'Flashcards', quiz: 'Knowledge check', checkpoint: 'Tier checkpoint', scenario: 'Scenario lab', exam: 'Practice exam' }
 
 function Sidebar({ active, onNavigate, open, onClose, progress }) {
   const overall = getOverallProgress(progress)
   return <aside className={`sidebar ${open ? 'sidebar--open' : ''}`}>
-    <div className="brand"><div className="brand__mark"><ShieldCheck size={22} /></div><div><strong>SEC+ FIELD GUIDE</strong><span>SY0-701</span></div></div>
+    <div className="brand"><button className="brand__mark brand__home" onClick={() => { onNavigate('dashboard'); onClose() }} aria-label="Return to Overview home" title="Field Guide home"><ShieldCheck size={22} /></button><div><strong>SEC+ FIELD GUIDE</strong><span>SY0-701</span></div></div>
     <button className="sidebar__close" onClick={onClose} aria-label="Close navigation"><X size={20} /></button>
     <nav className="nav" aria-label="Main navigation"><p className="eyebrow">Workspace</p>
       {navItems.map(({ id, label, icon: Icon }) => <button key={id} className={`nav__item ${active === id ? 'nav__item--active' : ''}`} onClick={() => { onNavigate(id); onClose() }}><Icon size={18} /><span>{label}</span>{id === 'path' && <span className="nav__badge">5</span>}</button>)}
@@ -130,9 +130,10 @@ function DomainsView({ progress }) {
   return <div className="page"><div className="page-intro"><div><p className="eyebrow">Objective reference</p><h2>Five exam domains.<br />Woven through every tier.</h2><p>Use this view to inspect official coverage. Your learning order is guided by difficulty, not the domain numbering.</p></div></div><div className="domain-grid">{coverage.map((domain) => { const Icon = domain.icon; return <button key={domain.id} className={`domain-card ${selected.id === domain.id ? 'domain-card--active' : ''}`} style={{ '--domain': domain.color }} onClick={() => setSelected(domain)}><span className="domain-card__number">0{domain.id}</span><span className="domain-card__icon"><Icon size={22} /></span><small>{domain.weight}% OF EXAM</small><h3>{domain.title}</h3><p>{domain.topics.join(' · ')}</p><div className="domain-card__bottom"><span><i style={{ width: `${domain.progress}%` }} /></span><strong>{domain.progress}%</strong></div></button>})}</div><section className="panel domain-detail" style={{ '--domain': selected.color }}><div><p className="eyebrow">Domain {selected.id} coverage</p><h3>{selected.title}</h3><p>Progress grows whenever you complete a mapped activity anywhere in the five-tier path.</p></div><div className="topic-chips">{selected.topics.map((topic, i) => <span key={topic}><b>{selected.id}.{i + 1}</b>{topic}</span>)}</div><Ring value={selected.progress} color={selected.color} size={82} /></section></div>
 }
 
-function ProgressView({ progress }) {
+function ProgressView({ progress, onImport }) {
   const readiness = getReadiness(progress)
-  return <div className="page"><div className="page-intro"><div><p className="eyebrow">Performance</p><h2>Your learning telemetry.</h2><p>Readiness combines weighted domain coverage with checkpoint accuracy. It will become more meaningful as you practice.</p></div></div><div className="progress-layout"><section className="panel readiness-panel"><div className="section-heading"><div><p className="eyebrow">Tier progress</p><h3>Five-stage trajectory</h3></div><span className="trend-up">{readiness}% ready</span></div><div className="tier-bars">{tiers.map((tier) => <div key={tier.id} style={{ '--tier': tier.color }}><span><b>Tier {tier.number}</b>{tier.title}</span><i><em style={{ width: `${getTierProgress(tier, progress)}%` }} /></i><strong>{getTierProgress(tier, progress)}%</strong></div>)}</div></section><section className="panel mastery-panel"><p className="eyebrow">Current focus</p><ShieldCheck size={34} /><h3>Foundations</h3><strong>{getTierProgress(tiers[0], progress)}% complete</strong><p>Finish the next recommended activity to strengthen your core map.</p></section></div></div>
+  const download = () => { const url=URL.createObjectURL(new Blob([progressRepository.export(progress)],{type:'application/json'})); const link=document.createElement('a'); link.href=url; link.download=`security-plus-progress-${new Date().toISOString().slice(0,10)}.json`; link.click(); URL.revokeObjectURL(url) }
+  return <div className="page"><div className="page-intro"><div><p className="eyebrow">Performance</p><h2>Your learning telemetry.</h2><p>Readiness combines weighted domain coverage with checkpoint accuracy. It will become more meaningful as you practice.</p></div></div><div className="progress-layout"><section className="panel readiness-panel"><div className="section-heading"><div><p className="eyebrow">Tier progress</p><h3>Five-stage trajectory</h3></div><span className="trend-up">{readiness}% ready</span></div><div className="tier-bars">{tiers.map((tier) => <div key={tier.id} style={{ '--tier': tier.color }}><span><b>Tier {tier.number}</b>{tier.title}</span><i><em style={{ width: `${getTierProgress(tier, progress)}%` }} /></i><strong>{getTierProgress(tier, progress)}%</strong></div>)}</div></section><section className="panel mastery-panel"><p className="eyebrow">Current focus</p><ShieldCheck size={34} /><h3>Foundations</h3><strong>{getTierProgress(tiers[0], progress)}% complete</strong><p>Finish the next recommended activity to strengthen your core map.</p></section><section className="panel data-panel"><p className="eyebrow">Learner data</p><h3>Keep your progress portable.</h3><p>Export a versioned backup or restore one created by this app. Imports remain on this device.</p><div><button className="button button--ghost" onClick={download}>Export progress</button><label className="button button--ghost">Import progress<input type="file" accept="application/json,.json" onChange={async(event)=>{const file=event.target.files?.[0];if(file) onImport(await file.text());event.target.value=''}} /></label></div></section></div></div>
 }
 
 function StudyGuideView() {
@@ -196,20 +197,25 @@ export default function App() {
   const finishOnboarding = (destination) => { persist({ ...progress, completedOnboarding: true }); setShowWelcome(false); if (destination === 'path') setActive('path') }
   const openTier = (tierId) => { setSelectedTierId(tierId); setActive('path'); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const openActivity = (id) => setActivityId(id)
-  const completeActivity = (activity, score = null) => {
+  const completeActivity = (activity, result = null, nextActivityId = null) => {
+    const normalizedResult = typeof result === 'number' ? { score: result } : (result ?? { score: null })
     const alreadyDone = progress.completedActivityIds.includes(activity.id)
     const completedActivityIds = alreadyDone ? progress.completedActivityIds : [...progress.completedActivityIds, activity.id]
-    const nextDraft = { ...progress, completedActivityIds, totalStudyMinutes: progress.totalStudyMinutes + (alreadyDone ? 0 : activity.duration), lastStudiedAt: new Date().toISOString(), results: { ...progress.results, [activity.id]: { attempts: (progress.results[activity.id]?.attempts ?? 0) + 1, score, completedAt: new Date().toISOString() } } }
+    const completedAt = new Date().toISOString()
+    const savedResult = { ...normalizedResult, attempts: (progress.results[activity.id]?.attempts ?? 0) + 1, completedAt }
+    const nextDraft = { ...progress, completedActivityIds, totalStudyMinutes: progress.totalStudyMinutes + (alreadyDone ? 0 : activity.duration), lastStudiedAt: completedAt, results: { ...progress.results, [activity.id]: savedResult }, scenarioResults: activity.type === 'scenario' ? { ...progress.scenarioResults, [activity.id]: savedResult } : progress.scenarioResults, examAttempts: activity.type === 'exam' ? [...progress.examAttempts, { activityId: activity.id, ...savedResult }] : progress.examAttempts }
     const nextActivity = getRecommendation(nextDraft).activity
     persist({ ...nextDraft, currentActivityId: nextActivity?.id ?? null })
-    setActivityId(null); setToastActivity(activity); window.setTimeout(() => setToastActivity(null), 4200)
+    setActivityId(nextActivityId); setToastActivity(activity); window.setTimeout(() => setToastActivity(null), 4200)
   }
   const activity = activityId ? getActivity(activityId) : null
+  const activityIndex = activity ? allActivities.findIndex((candidate) => candidate.id === activity.id) : -1
+  const nextActivity = activityIndex >= 0 ? allActivities[activityIndex + 1] ?? null : null
   const selectedTier = selectedTierId ? getTier(selectedTierId) : null
 
   return <div className="app-shell"><Sidebar active={active} onNavigate={(id) => { setActive(id); setSelectedTierId(null) }} open={menuOpen} onClose={() => setMenuOpen(false)} progress={progress} />{menuOpen && <button className="sidebar-scrim" onClick={() => setMenuOpen(false)} aria-label="Close navigation overlay" />}<main className="main"><Topbar title={titles[active]} onMenu={() => setMenuOpen(true)} />
     {active === 'dashboard' && <Dashboard progress={progress} onOpenTier={openTier} onOpenActivity={openActivity} onNavigate={(id) => { setActive(id); setSelectedTierId(null) }} />}
     {active === 'path' && (selectedTier ? <TierDetail tier={selectedTier} progress={progress} onBack={() => setSelectedTierId(null)} onOpenActivity={openActivity} /> : <PathView progress={progress} onOpenTier={openTier} />)}
-    {active === 'domains' && <DomainsView progress={progress} />}{active === 'progress' && <ProgressView progress={progress} />}{active === 'study-guide' && <StudyGuideView />}
-  </main>{showWelcome && <Onboarding onStart={() => finishOnboarding('start')} onExplore={() => finishOnboarding('path')} />}{activity && <LearningActivityView activity={activity} progress={progress} onClose={() => setActivityId(null)} onComplete={completeActivity} />}{toastActivity && <CompletionToast activity={toastActivity} onClose={() => setToastActivity(null)} />}</div>
+    {active === 'domains' && <DomainsView progress={progress} />}{active === 'progress' && <ProgressView progress={progress} onImport={(serialized)=>{try{setProgress(progressRepository.import(serialized))}catch(error){window.alert(error.message)}}} />}{active === 'study-guide' && <StudyGuideView />}
+  </main>{showWelcome && <Onboarding onStart={() => finishOnboarding('start')} onExplore={() => finishOnboarding('path')} />}{activity && <LearningActivityView activity={activity} nextActivity={nextActivity} progress={progress} onClose={() => setActivityId(null)} onHome={() => {setActivityId(null);setSelectedTierId(null);setActive('dashboard');window.scrollTo({top:0})}} onOpenNext={setActivityId} onComplete={completeActivity} />}{toastActivity && <CompletionToast activity={toastActivity} onClose={() => setToastActivity(null)} />}</div>
 }

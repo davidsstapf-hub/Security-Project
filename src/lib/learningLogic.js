@@ -41,7 +41,7 @@ export function getModuleProgress(module, progress) {
 export function moduleNeedsReview(module, progress) {
   return module.activities.some((activity) => {
     const score = progress.results[activity.id]?.score
-    return (activity.type === 'quiz' || activity.type === 'checkpoint') && typeof score === 'number' && score < 0.8
+    return ['quiz','checkpoint','scenario','exam'].includes(activity.type) && typeof score === 'number' && score < 0.8
   })
 }
 

@@ -32,7 +32,7 @@ test('migration repairs malformed progress and deduplicates activities', () => {
   const migrated = migrateProgress({ version: 0, completedActivityIds: ['t1-controls', 't1-controls'], results: null })
   assert.deepEqual(migrated.completedActivityIds, ['t1-controls'])
   assert.deepEqual(migrated.results, {})
-  assert.equal(migrated.version, 2)
+  assert.equal(migrated.version, 3)
 })
 
 test('version 1 progress maps renamed activities and reopens the expanded checkpoint', () => {
@@ -49,6 +49,19 @@ test('repository saves and reloads a versioned local profile', () => {
   const loaded = repository.load()
   assert.equal(loaded.completedOnboarding, true)
   assert.equal(loaded.totalStudyMinutes, 7)
+})
+
+test('repository exports, imports, and rejects unrelated learner data', () => {
+  const values = new Map()
+  const storage = { getItem:key => values.get(key) ?? null, setItem:(key,value)=>values.set(key,value), removeItem:key=>values.delete(key) }
+  const repository = createProgressRepository(storage)
+  const original = { ...createDefaultProgress(), learnerName:'Portable learner', completedActivityIds:['t1-controls'] }
+  const serialized = repository.export(original)
+  const imported = repository.import(serialized)
+  assert.equal(imported.learnerName, 'Portable learner')
+  assert.deepEqual(imported.completedActivityIds, ['t1-controls'])
+  assert.throws(() => repository.import('{"type":"unrelated","progress":{}}'), /not a Security\+ learner export/)
+  assert.throws(() => repository.import('not json'), /not valid JSON/)
 })
 
 test('Security Controls ships as a complete learning loop', () => {
@@ -119,4 +132,37 @@ test('activity and question identifiers remain unique', () => {
   const questionIds = allActivities.flatMap((activity) => activity.questions?.map((question) => question.id) ?? [])
   assert.equal(new Set(activityIds).size, activityIds.length)
   assert.equal(new Set(questionIds).size, questionIds.length)
+})
+
+for (const tier of tiers.slice(1)) {
+  test(`Tier ${tier.number} ships six complete learning loops`, () => {
+    const sections = tier.modules.filter((module) => /^t\d-[a-z-]+-section$/.test(module.id) && !module.id.includes('final') && module.activities.length === 5)
+    assert.equal(sections.length, 6)
+    for (const section of sections) {
+      const [lesson, scenario, cards, check, quiz] = section.activities
+      assert.equal(lesson.type, 'lesson')
+      assert.equal(lesson.content.length, 6)
+      assert.equal(scenario.type, 'scenario')
+      assert.ok(scenario.evidence.length >= 3)
+      assert.ok(scenario.actions.some((action) => action.correct))
+      assert.ok(cards.cards.length >= 14 && cards.cards.length <= 16)
+      assert.equal(check.questions.length, 5)
+      assert.equal(quiz.questions.length, 10)
+    }
+  })
+
+  test(`Tier ${tier.number} checkpoint covers every section`, () => {
+    const checkpoint = tier.modules.flatMap((module) => module.activities).find((activity) => activity.id === `t${tier.number}-checkpoint`)
+    assert.equal(checkpoint.questions.length, 20)
+    assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
+  })
+}
+
+test('final exam is timed, weighted, cross-domain, and uniquely identified', () => {
+  const exam = allActivities.find((activity) => activity.id === 't5-final-exam')
+  assert.equal(exam.type, 'exam')
+  assert.equal(exam.config.durationMinutes, 90)
+  assert.deepEqual(exam.config.domainWeights, { 1:12,2:22,3:18,4:28,5:20 })
+  assert.deepEqual(new Set(exam.questions.map((question) => question.domain)), new Set([1,2,3,4,5]))
+  assert.equal(new Set(exam.questions.map((question) => question.id)).size, exam.questions.length)
 })

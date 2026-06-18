@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'secplus-learner-progress'
-export const CURRENT_PROGRESS_VERSION = 2
+export const CURRENT_PROGRESS_VERSION = 3
+export const PROGRESS_EXPORT_TYPE = 'security-plus-progress'
 
 const ACTIVITY_ID_ALIASES = {
   't1-auth': 't1-identity',
@@ -13,6 +14,8 @@ export function createDefaultProgress() {
     completedOnboarding: false,
     completedActivityIds: [],
     results: {},
+    scenarioResults: {},
+    examAttempts: [],
     totalStudyMinutes: 0,
     currentActivityId: 't1-controls',
     lastStudiedAt: null,
@@ -39,6 +42,8 @@ export function migrateProgress(value) {
     version: CURRENT_PROGRESS_VERSION,
     completedActivityIds: [...new Set(completedActivityIds)],
     results,
+    scenarioResults: value.scenarioResults && typeof value.scenarioResults === 'object' ? value.scenarioResults : {},
+    examAttempts: Array.isArray(value.examAttempts) ? value.examAttempts : [],
   }
 }
 
@@ -59,6 +64,18 @@ export function createProgressRepository(storage = globalThis.localStorage) {
     },
     clear() {
       storage?.removeItem(STORAGE_KEY)
+    },
+    export(progress) {
+      return JSON.stringify({ type:PROGRESS_EXPORT_TYPE, exportedAt:new Date().toISOString(), progress:migrateProgress(progress) }, null, 2)
+    },
+    import(serialized) {
+      let envelope
+      try { envelope = JSON.parse(serialized) } catch { throw new Error('The selected file is not valid JSON.') }
+      if (!envelope || envelope.type !== PROGRESS_EXPORT_TYPE || !envelope.progress || typeof envelope.progress !== 'object') throw new Error('This is not a Security+ learner export.')
+      if (serialized.length > 2_000_000) throw new Error('The learner export is too large.')
+      const progress = migrateProgress(envelope.progress)
+      this.save(progress)
+      return progress
     },
   }
 }

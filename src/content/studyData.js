@@ -5,8 +5,9 @@ import { identityCards, identityKnowledgeCheck, identityReading, identitySection
 import { leastPrivilegeCards, leastPrivilegeKnowledgeCheck, leastPrivilegeReading, leastPrivilegeSectionQuiz } from './sections/leastPrivilege.js'
 import { threatsCards, threatsKnowledgeCheck, threatsReading, threatsSectionQuiz } from './sections/commonThreats.js'
 import { cryptographyCards, cryptographyKnowledgeCheck, cryptographyReading, cryptographySectionQuiz } from './sections/cryptography.js'
+import { advancedTiers } from './advancedTiers.js'
 
-/** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'} ActivityType */
+/** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'|'scenario'|'exam'} ActivityType */
 /** @typedef {'foundation'|'developing'|'applied'|'advanced'|'synthesis'} Difficulty */
 
 export const domains = [
@@ -75,7 +76,7 @@ const tier1CheckpointQuestions = [
 ].map((question) => ({ ...question, id: `t1-final-${question.id}` }))
 
 /** @type {Array<{id:string,number:number,title:string,subtitle:string,difficulty:Difficulty,color:string,minutes:number,recommendedAfter:number|null,modules:Array}>} */
-export const tiers = [
+const legacyTiers = [
   {
     id: 'tier-1', number: 1, title: 'Foundations', subtitle: 'Learn the language of security', difficulty: 'foundation', color: '#00d9ff', minutes: 298, recommendedAfter: null,
     modules: [
@@ -168,6 +169,18 @@ export const tiers = [
     ] }],
   },
 ]
+
+export const tiers = [legacyTiers[0], ...advancedTiers]
+
+// Deterministically distribute correct answers without changing question meaning.
+// The stable question id controls rotation so updates do not reshuffle saved content.
+for (const tier of tiers) for (const module of tier.modules) for (const activity of module.activities) for (const question of activity.questions ?? []) {
+  const rotation = [...question.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % question.options.length
+  if (rotation) {
+    question.options = [...question.options.slice(rotation), ...question.options.slice(0, rotation)]
+    question.correctIndex = (question.correctIndex - rotation + question.options.length) % question.options.length
+  }
+}
 
 export const allActivities = tiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id }))))
 
