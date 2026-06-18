@@ -1,0 +1,213 @@
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Activity,
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  BarChart3,
+  BookOpen,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  CircleHelp,
+  Clock3,
+  Command,
+  Flame,
+  Gauge,
+  GraduationCap,
+  Layers3,
+  LayoutDashboard,
+  LockKeyhole,
+  Menu,
+  Play,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Target,
+  Trophy,
+  X,
+  Zap,
+} from 'lucide-react'
+import { domains, getActivity, getTier, tiers } from '../content/studyData.js'
+import { getDomainCoverage, getNextActivity, getOverallProgress, getReadiness, getTierProgress } from '../lib/learningLogic.js'
+import { progressRepository } from '../lib/progressRepository.js'
+
+const navItems = [
+  { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+  { id: 'path', label: 'Guided path', icon: Layers3 },
+  { id: 'domains', label: 'Exam domains', icon: BookOpen },
+  { id: 'progress', label: 'Progress', icon: BarChart3 },
+  { id: 'study-guide', label: 'How to study', icon: GraduationCap },
+]
+
+const typeLabels = { lesson: 'Lesson', flashcards: 'Flashcards', quiz: 'Knowledge check', checkpoint: 'Tier checkpoint' }
+
+function Sidebar({ active, onNavigate, open, onClose, progress }) {
+  const overall = getOverallProgress(progress)
+  return <aside className={`sidebar ${open ? 'sidebar--open' : ''}`}>
+    <div className="brand"><div className="brand__mark"><ShieldCheck size={22} /></div><div><strong>SEC+ FIELD GUIDE</strong><span>SY0-701</span></div></div>
+    <button className="sidebar__close" onClick={onClose} aria-label="Close navigation"><X size={20} /></button>
+    <nav className="nav" aria-label="Main navigation"><p className="eyebrow">Workspace</p>
+      {navItems.map(({ id, label, icon: Icon }) => <button key={id} className={`nav__item ${active === id ? 'nav__item--active' : ''}`} onClick={() => { onNavigate(id); onClose() }}><Icon size={18} /><span>{label}</span>{id === 'path' && <span className="nav__badge">5</span>}</button>)}
+    </nav>
+    <div className="sidebar__mission"><div className="mission__icon"><Target size={18} /></div><p className="eyebrow">Learning path</p><strong>Foundations first.</strong><span>Five guided tiers turn a big exam into the next small win.</span><div className="mission__meter"><i style={{ width: `${overall}%` }} /></div><small>{overall}% journey complete</small></div>
+    <div className="profile"><div className="profile__avatar">{progress.learnerName.slice(0, 2).toUpperCase()}</div><div><strong>{progress.learnerName}</strong><span>Security+ candidate</span></div><ChevronRight size={17} /></div>
+  </aside>
+}
+
+function Topbar({ title, onMenu }) {
+  return <header className="topbar"><button className="icon-button mobile-menu" onClick={onMenu} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">Learning workspace</p><h1>{title}</h1></div><div className="topbar__actions"><label className="search"><Search size={17} /><input aria-label="Search study content" placeholder="Search objectives..." /><kbd><Command size={11} /> K</kbd></label><div className="streak"><Flame size={17} /><strong>4</strong><span>day streak</span></div></div></header>
+}
+
+function Ring({ value, color = '#00d9ff', size = 74 }) {
+  return <div className="ring" style={{ '--value': `${Math.max(0, Math.min(100, value)) * 3.6}deg`, '--ring': color, '--size': `${size}px` }}><strong>{value}%</strong></div>
+}
+
+function Onboarding({ onStart, onExplore }) {
+  return <div className="welcome-overlay"><section className="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div className="welcome-orbit"><div className="brand__mark"><ShieldCheck size={30} /></div><i /><i /></div>
+    <p className="eyebrow">Welcome to your field guide</p><h1 id="welcome-title">Security+ is a mountain.<br /><em>We built you a trail.</em></h1>
+    <p>Five guided tiers move from essential language to exam-level decisions. Nothing is locked, and you’ll always know the next useful step.</p>
+    <div className="welcome-tiers">{tiers.map((tier) => <span key={tier.id} style={{ '--tier': tier.color }}><b>0{tier.number}</b>{tier.title}</span>)}</div>
+    <div className="welcome-actions"><button className="button button--primary" onClick={onStart}><Play size={17} fill="currentColor" />Start with Tier 1 <ArrowRight size={17} /></button><button className="button button--ghost" onClick={onExplore}>Explore the full path</button></div>
+    <small>Progress stays on this device. No account required.</small>
+  </section></div>
+}
+
+function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
+  const readiness = getReadiness(progress)
+  const next = getNextActivity(progress)
+  const nextTier = next ? getTier(`tier-${next.tierNumber}`) : tiers[tiers.length - 1]
+  const tier1Progress = getTierProgress(tiers[0], progress)
+  return <div className="page dashboard"><div className="circuit-field" aria-hidden="true">
+    {Array.from({ length: 14 }, (_, index) => <span key={index}><i /></span>)}
+  </div>
+    <section className="hero guided-hero"><div className="hero__grid" /><div className="hero__copy"><span className="status-pill"><i /> Tier 1 · Foundations</span><p className="eyebrow">Your recommended next step</p><h2>{next ? next.title : 'Foundations complete.'}<br /><em>{next ? `${next.duration} focused minutes.` : 'That deserves a victory lap.'}</em></h2><p>{next?.summary ?? 'Explore the next tier or review any activity whenever you like.'}</p><div className="hero__actions"><button className="button button--primary" onClick={() => next && onOpenActivity(next.id)}><Play size={17} fill="currentColor" />{next ? 'Continue learning' : 'Explore Tier 2'}<ArrowRight size={17} /></button><button className="button button--ghost" onClick={() => onOpenTier(nextTier.id)}><Layers3 size={17} />View tier</button></div></div>
+      <div className="hero__visual"><div className="orbit orbit--one" /><div className="orbit orbit--two" /><div className="readiness"><Ring value={tier1Progress} size={148} /><span>TIER 1 PROGRESS</span></div><div className="signal signal--one"><Activity size={14} /> {readiness}% exam ready</div><div className="signal signal--two"><LockKeyhole size={14} /> Path stays open</div></div>
+    </section>
+    <section className="stats-row"><article><span className="stat-icon stat-icon--green"><Clock3 size={19} /></span><div><p>Study time</p><strong>{progress.totalStudyMinutes} min</strong><small>saved on this device</small></div></article><article><span className="stat-icon stat-icon--orange"><Target size={19} /></span><div><p>Current tier</p><strong>Tier 1</strong><small>Foundations</small></div></article><article><span className="stat-icon stat-icon--blue"><Award size={19} /></span><div><p>Activities</p><strong>{progress.completedActivityIds.length}</strong><small>completed across the path</small></div></article><article><span className="stat-icon stat-icon--purple"><Gauge size={19} /></span><div><p>Readiness</p><strong>{readiness}%</strong><small>coverage + accuracy</small></div></article></section>
+    <div className="guided-layout"><section className="panel journey-panel"><div className="section-heading"><div><p className="eyebrow">Your guided journey</p><h3>Five tiers, one clear direction</h3></div><button className="text-button" onClick={() => onNavigate('path')}>Full path <ArrowRight size={15} /></button></div><TierRail progress={progress} onOpenTier={onOpenTier} compact /></section>
+      <aside className="right-stack"><section className="panel daily-panel"><div className="section-heading"><div><p className="eyebrow">Today’s target</p><h3>One useful win</h3></div><Sparkles size={20} /></div><div className="daily-progress"><Ring value={Math.min(100, Math.round(progress.totalStudyMinutes / 20 * 100))} size={92} /><div><strong>{Math.min(progress.totalStudyMinutes, 20)} <small>/ 20 min</small></strong><span>Consistency beats cramming.</span></div></div><div className="mini-week">{['M','T','W','T','F','S','S'].map((day, i) => <span key={i} className={i < 4 ? 'done' : i === 4 ? 'today' : ''}>{i < 4 ? <Check size={13} /> : day}</span>)}</div></section>
+      <section className="panel reassurance-card"><Star size={21} /><p className="eyebrow">No hard locks</p><h3>Curiosity is allowed.</h3><p>Preview any tier whenever you want. We’ll keep recommending the gentlest useful next step.</p></section></aside>
+    </div>
+  </div>
+}
+
+function TierRail({ progress, onOpenTier, compact = false }) {
+  return <div className={`tier-rail ${compact ? 'tier-rail--compact' : ''}`}>{tiers.map((tier, index) => {
+    const value = getTierProgress(tier, progress)
+    const recommended = tier.number === 1 && value < 100
+    return <button key={tier.id} className={`tier-node ${recommended ? 'tier-node--recommended' : ''}`} style={{ '--tier': tier.color }} onClick={() => onOpenTier(tier.id)}>
+      <span className="tier-node__number">{value === 100 ? <Check size={19} /> : tier.number}</span><span className="tier-node__copy"><small>{recommended ? 'Recommended start' : tier.recommendedAfter ? `Best after Tier ${tier.recommendedAfter}` : 'Start here'}</small><strong>{tier.title}</strong><em>{tier.subtitle}</em></span><span className="tier-node__progress"><i style={{ width: `${value}%` }} /></span><b>{value}%</b><ChevronRight size={18} />{index < tiers.length - 1 && <span className="tier-connector" />}
+    </button>
+  })}</div>
+}
+
+function PathView({ progress, onOpenTier }) {
+  return <div className="page"><div className="page-intro"><div><p className="eyebrow">Guided curriculum</p><h2>See the whole mountain.<br />Take one step.</h2><p>The path mixes all five exam domains in prerequisite order. Every tier is open, but Tier 1 gives you the vocabulary and confidence the rest will use.</p></div><div className="path-summary"><Ring value={getOverallProgress(progress)} size={94} /><span><strong>Full journey</strong><small>{progress.completedActivityIds.length} activities finished</small></span></div></div><section className="panel path-panel"><TierRail progress={progress} onOpenTier={onOpenTier} /></section></div>
+}
+
+function TierDetail({ tier, progress, onBack, onOpenActivity }) {
+  const value = getTierProgress(tier, progress)
+  return <div className="page tier-detail-page" style={{ '--tier': tier.color }}><button className="back-button" onClick={onBack}><ArrowLeft size={16} /> Back to path</button><section className="tier-banner"><div><span className="status-pill"><i /> Tier {tier.number} of 5</span><p className="eyebrow">{tier.difficulty} · {tier.minutes} minutes</p><h2>{tier.title}</h2><p>{tier.subtitle}. {tier.modules[0].summary}</p></div><Ring value={value} color={tier.color} size={126} /></section>
+    {tier.recommendedAfter && <div className="guidance-note"><Sparkles size={18} /><div><strong>Recommended after Tier {tier.recommendedAfter}, never locked.</strong><span>You can explore now. If anything feels unfamiliar, the earlier tier will build the missing context.</span></div></div>}
+    <div className="module-stack">{tier.modules.map((module, moduleIndex) => <section className="panel module-panel" key={module.id}><div className="module-heading"><span>0{moduleIndex + 1}</span><div><p className="eyebrow">Learning module</p><h3>{module.title}</h3><p>{module.summary}</p></div></div><div className="activity-list">{module.activities.map((activity, activityIndex) => {
+      const done = progress.completedActivityIds.includes(activity.id)
+      const hasContent = activity.content || activity.cards || activity.questions
+      return <button key={activity.id} className={`activity-row ${done ? 'activity-row--done' : ''}`} onClick={() => onOpenActivity(activity.id)}><span className="activity-status">{done ? <Check size={17} /> : activityIndex + 1}</span><span className="activity-copy"><small>{typeLabels[activity.type]} · Domain {activity.domain} · Objective {activity.objective}</small><strong>{activity.title}</strong><em>{activity.summary}</em></span><span className="activity-time"><Clock3 size={14} />{activity.duration} min</span>{!hasContent && <span className="preview-badge">Preview</span>}<ChevronRight size={18} /></button>
+    })}</div></section>)}</div>
+  </div>
+}
+
+function DomainsView({ progress }) {
+  const coverage = getDomainCoverage(progress)
+  const [selected, setSelected] = useState(coverage[0])
+  useEffect(() => setSelected(coverage.find((domain) => domain.id === selected.id) ?? coverage[0]), [progress])
+  return <div className="page"><div className="page-intro"><div><p className="eyebrow">Objective reference</p><h2>Five exam domains.<br />Woven through every tier.</h2><p>Use this view to inspect official coverage. Your learning order is guided by difficulty, not the domain numbering.</p></div></div><div className="domain-grid">{coverage.map((domain) => { const Icon = domain.icon; return <button key={domain.id} className={`domain-card ${selected.id === domain.id ? 'domain-card--active' : ''}`} style={{ '--domain': domain.color }} onClick={() => setSelected(domain)}><span className="domain-card__number">0{domain.id}</span><span className="domain-card__icon"><Icon size={22} /></span><small>{domain.weight}% OF EXAM</small><h3>{domain.title}</h3><p>{domain.topics.join(' · ')}</p><div className="domain-card__bottom"><span><i style={{ width: `${domain.progress}%` }} /></span><strong>{domain.progress}%</strong></div></button>})}</div><section className="panel domain-detail" style={{ '--domain': selected.color }}><div><p className="eyebrow">Domain {selected.id} coverage</p><h3>{selected.title}</h3><p>Progress grows whenever you complete a mapped activity anywhere in the five-tier path.</p></div><div className="topic-chips">{selected.topics.map((topic, i) => <span key={topic}><b>{selected.id}.{i + 1}</b>{topic}</span>)}</div><Ring value={selected.progress} color={selected.color} size={82} /></section></div>
+}
+
+function ProgressView({ progress }) {
+  const readiness = getReadiness(progress)
+  return <div className="page"><div className="page-intro"><div><p className="eyebrow">Performance</p><h2>Your learning telemetry.</h2><p>Readiness combines weighted domain coverage with checkpoint accuracy. It will become more meaningful as you practice.</p></div></div><div className="progress-layout"><section className="panel readiness-panel"><div className="section-heading"><div><p className="eyebrow">Tier progress</p><h3>Five-stage trajectory</h3></div><span className="trend-up">{readiness}% ready</span></div><div className="tier-bars">{tiers.map((tier) => <div key={tier.id} style={{ '--tier': tier.color }}><span><b>Tier {tier.number}</b>{tier.title}</span><i><em style={{ width: `${getTierProgress(tier, progress)}%` }} /></i><strong>{getTierProgress(tier, progress)}%</strong></div>)}</div></section><section className="panel mastery-panel"><p className="eyebrow">Current focus</p><ShieldCheck size={34} /><h3>Foundations</h3><strong>{getTierProgress(tiers[0], progress)}% complete</strong><p>Finish the next recommended activity to strengthen your core map.</p></section></div></div>
+}
+
+function StudyGuideView() {
+  return <div className="page study-guide-page"><section className="study-guide-hero"><div><span className="status-pill"><i /> Study strategy</span><p className="eyebrow">How to study for the Security+</p><h2>Use this app as a companion.<br /><em>Not your only resource.</em></h2><p>Security+ covers broad technical foundations that deserve deeper instruction, hands-on practice, and multiple perspectives. Sec+ Field Guide is designed to help prepare you—but it is not intended to teach every fundamental from the ground up.</p></div><div className="study-guide-mark"><GraduationCap size={42} /><span>Learn broadly.<br />Review often.</span></div></section>
+    <section className="study-principle"><p className="eyebrow">Our purpose</p><h3>Micro-learning that keeps important ideas within reach.</h3><p>Use these focused lessons to revisit a concept quickly, keep terminology fresh with flashcards, and test your understanding with short-form exams. The app works best when it reinforces material you are also learning through a complete course, official exam objectives, documentation, videos, books, labs, and real technical practice.</p></section>
+    <div className="study-method-grid">
+      <article><span><BookOpen size={20} /></span><p className="eyebrow">01 · Learn deeply</p><h3>Choose a primary course</h3><p>Follow a comprehensive Security+ course or study guide that explains networking, operating systems, cloud services, identity, cryptography, risk, and operations in depth.</p></article>
+      <article><span><Layers3 size={20} /></span><p className="eyebrow">02 · Practice actively</p><h3>Build and investigate</h3><p>Use labs, virtual machines, command-line tools, log samples, and configuration exercises. Security concepts become durable when you see how systems actually behave.</p></article>
+      <article><span><Sparkles size={20} /></span><p className="eyebrow">03 · Review briefly</p><h3>Use this field guide</h3><p>Return for short sessions. Read one focused passage, review its flashcards, and revisit terms before they fade. Consistent retrieval is more useful than occasional cramming.</p></article>
+      <article><span><CircleHelp size={20} /></span><p className="eyebrow">04 · Test honestly</p><h3>Take short-form exams</h3><p>Answer without notes, read every explanation, and investigate why the wrong choices are wrong. Use missed questions to decide what to study next in your primary resources.</p></article>
+    </div>
+    <section className="study-rhythm"><div><p className="eyebrow">A simple weekly rhythm</p><h3>Learn → apply → retrieve → adjust</h3></div><ol><li><strong>Learn</strong><span>Study a complete topic through your primary course.</span></li><li><strong>Apply</strong><span>Use a lab or real example to make the idea concrete.</span></li><li><strong>Retrieve</strong><span>Review our flashcards and complete a short exam without notes.</span></li><li><strong>Adjust</strong><span>Return to weak objectives and repeat until you can explain them clearly.</span></li></ol></section>
+    <aside className="study-disclaimer"><ShieldCheck size={22} /><div><strong>Preparation, not a guarantee.</strong><p>No study tool can guarantee a passing score. Always compare your preparation against the current official CompTIA Security+ exam objectives and use several reliable resources.</p></div></aside>
+    <footer className="additional-resources"><div><p className="eyebrow">Continue learning</p><h3>Additional resources</h3><p>For comprehensive video instruction and another perspective on the exam objectives, consider exploring these independent educators.</p></div><nav aria-label="Additional Security+ study resources"><a href="https://www.youtube.com/watch?v=KiEptGbnEBc&list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv" target="_blank" rel="noreferrer">Professor Messer <ArrowRight size={16} /></a><a href="https://www.udemy.com/user/jason-dion/?kw=jason+di&src=sac" target="_blank" rel="noreferrer">Jason Dion <ArrowRight size={16} /></a></nav><p className="resources-disclosure">Sec+ Field Guide and its creator are not affiliated with, endorsed by, or sponsored by CompTIA, Udemy, Jason Dion, or Professor Messer. All trademarks and course materials belong to their respective owners.</p></footer>
+  </div>
+}
+
+function LessonActivity({ activity, onComplete, completed }) {
+  return <><div className="lesson-objective"><span>Domain {activity.domain}</span><span>Objective {activity.objective}</span><span>{activity.duration} min</span></div>{activity.media && <figure className="lesson-media"><img src={activity.media.src} alt={activity.media.alt} /><figcaption>{activity.media.caption}</figcaption></figure>}{activity.learningObjectives && <section className="learning-objectives"><p className="eyebrow">By the end, you can</p>{activity.learningObjectives.map((objective) => <span key={objective}><Check size={14} />{objective}</span>)}</section>}<article className="lesson-body">{activity.content.map((paragraph, index) => <div className="lesson-section" key={paragraph}><span className="lesson-section__number">{String(index + 1).padStart(2, '0')}</span><div className="lesson-section__content">{activity.headings?.[index] && <h2>{activity.headings[index]}</h2>}<p>{paragraph}</p></div></div>)}</article><div className="key-idea"><Sparkles size={19} /><div><strong>Field note</strong><p>Ask what the safeguard protects, how it works, and which risk it reduces. That reasoning transfers better than memorizing labels.</p></div></div><button className="button button--primary activity-complete" onClick={onComplete}>{completed ? <><Check size={17} />Completed — continue</> : <>Mark complete <ArrowRight size={17} /></>}</button></>
+}
+
+function FlashcardActivity({ activity, onComplete, completed }) {
+  const [index, setIndex] = useState(0); const [flipped, setFlipped] = useState(false)
+  const card = activity.cards[index]
+  return <><p className="activity-instruction">Tap the card to reveal the meaning. Move at your own pace—this is retrieval practice, not a test.</p><button className={`flashcard ${flipped ? 'flashcard--flipped' : ''}`} onClick={() => setFlipped(!flipped)}><span>{flipped ? 'Definition' : `Term ${index + 1} of ${activity.cards.length}`}</span><strong>{flipped ? card[1] : card[0]}</strong><small>{flipped ? 'Tap to see term' : 'Tap to reveal'}</small></button><div className="flashcard-controls"><button className="button button--ghost" disabled={index === 0} onClick={() => { setIndex(index - 1); setFlipped(false) }}><ArrowLeft size={16} />Previous</button>{index < activity.cards.length - 1 ? <button className="button button--primary" onClick={() => { setIndex(index + 1); setFlipped(false) }}>Next card <ArrowRight size={16} /></button> : <button className="button button--primary" onClick={onComplete}>{completed ? 'Review complete' : 'Complete deck'} <Check size={16} /></button>}</div></>
+}
+
+function QuizActivity({ activity, onComplete }) {
+  const [index, setIndex] = useState(0); const [selected, setSelected] = useState(null); const [correct, setCorrect] = useState(0); const [finished, setFinished] = useState(false)
+  const question = activity.questions[index]; const answered = selected !== null
+  const choose = (choice) => { if (answered) return; setSelected(choice); if (choice === question.correctIndex) setCorrect(correct + 1) }
+  const advance = () => { if (index === activity.questions.length - 1) { setFinished(true); return }; setIndex(index + 1); setSelected(null) }
+  if (finished) { const score = Math.round(correct / activity.questions.length * 100); return <div className="activity-results"><div className="results-mark"><Trophy size={38} /></div><p className="eyebrow">{activity.type === 'checkpoint' ? 'Checkpoint complete' : 'Knowledge check complete'}</p><h2>{score >= 80 ? 'Strong signal.' : 'Useful reconnaissance.'}</h2><p>You scored <strong>{correct} of {activity.questions.length}</strong>. Incorrect answers are information, not punishment.</p><div className="results-score"><strong>{score}%</strong><span>accuracy</span></div><button className="button button--primary" onClick={() => onComplete(score / 100)}>Save progress <ArrowRight size={16} /></button></div> }
+  return <><div className="quiz-head"><div><p className="eyebrow">Question {index + 1} of {activity.questions.length}</p><span>Domain {question.domain} · Objective {question.objective}</span></div><div className="quiz-dots">{activity.questions.map((_, i) => <i key={i} className={i <= index ? 'active' : ''} />)}</div></div><h2 className="question-title">{question.prompt}</h2><div className="answers">{question.options.map((option, choice) => { let state = ''; if (answered && choice === question.correctIndex) state = 'answer--correct'; else if (answered && choice === selected) state = 'answer--wrong'; return <button key={option} className={`answer ${state}`} onClick={() => choose(choice)}><span>{String.fromCharCode(65 + choice)}</span>{option}{answered && choice === question.correctIndex && <CheckCircle2 size={19} />}</button> })}</div>{answered && <div className={`explanation ${selected === question.correctIndex ? 'explanation--correct' : ''}`}><strong>{selected === question.correctIndex ? 'Correct — clean read.' : 'Not quite. Here’s the distinction.'}</strong><p>{question.explanation}</p></div>}<div className="quiz-footer"><span>{correct} correct so far</span><button className="button button--primary" disabled={!answered} onClick={advance}>{index === activity.questions.length - 1 ? 'See results' : 'Next question'} <ArrowRight size={16} /></button></div></>
+}
+
+function ActivityView({ activity, progress, onClose, onComplete }) {
+  const completed = progress.completedActivityIds.includes(activity.id)
+  const hasContent = activity.content || activity.cards || activity.questions
+  const [readingProgress, setReadingProgress] = useState(0)
+  const updateReadingProgress = (event) => { const element = event.currentTarget; const available = element.scrollHeight - element.clientHeight; setReadingProgress(available > 0 ? Math.min(100, Math.round(element.scrollTop / available * 100)) : 100) }
+  return <div className="activity-overlay" onScroll={updateReadingProgress}><main className="activity-view"><header className="activity-header"><button className="back-button" onClick={onClose}><ArrowLeft size={16} /> Exit activity</button><span className="activity-header__type">{typeLabels[activity.type]}</span><i className="reading-progress" style={{ width: `${readingProgress}%` }} /></header><div className="activity-shell"><div className="activity-title"><p className="eyebrow">Tier {activity.tierNumber} · {activity.difficulty}</p><h1>{activity.title}</h1><p>{activity.summary}</p></div>{!hasContent ? <div className="preview-state"><Layers3 size={35} /><p className="eyebrow">Curriculum preview</p><h2>This activity has its place on the trail.</h2><p>Its full learning content arrives after the complete Tier 1 experience is validated. You can still explore every tier and see how the path fits together.</p><button className="button button--primary" onClick={onClose}>Return to tier <ArrowRight size={16} /></button></div> : activity.type === 'lesson' ? <LessonActivity activity={activity} completed={completed} onComplete={() => onComplete(activity)} /> : activity.type === 'flashcards' ? <FlashcardActivity activity={activity} completed={completed} onComplete={() => onComplete(activity)} /> : <QuizActivity activity={activity} onComplete={(score) => onComplete(activity, score)} />}</div></main></div>
+}
+
+function CompletionToast({ activity, onClose }) {
+  return <div className="completion-toast" role="status"><span><Check size={18} /></span><div><strong>{activity.type === 'checkpoint' ? 'Tier checkpoint complete!' : 'Progress saved'}</strong><small>{activity.title} · keep the momentum gentle.</small></div><button onClick={onClose} aria-label="Dismiss"><X size={16} /></button></div>
+}
+
+export default function App() {
+  const [progress, setProgress] = useState(() => progressRepository.load())
+  const [active, setActive] = useState('dashboard')
+  const [selectedTierId, setSelectedTierId] = useState(null)
+  const [activityId, setActivityId] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [toastActivity, setToastActivity] = useState(null)
+  const [showWelcome, setShowWelcome] = useState(() => !progressRepository.load().completedOnboarding)
+  const titles = useMemo(() => Object.fromEntries(navItems.map((item) => [item.id, item.label])), [])
+
+  useEffect(() => { const handleKey = (event) => { if (event.key === 'Escape') { setActivityId(null); setMenuOpen(false) } }; window.addEventListener('keydown', handleKey); return () => window.removeEventListener('keydown', handleKey) }, [])
+  const persist = (next) => { const saved = progressRepository.save(next); setProgress(saved); return saved }
+  const finishOnboarding = (destination) => { persist({ ...progress, completedOnboarding: true }); setShowWelcome(false); if (destination === 'path') setActive('path') }
+  const openTier = (tierId) => { setSelectedTierId(tierId); setActive('path'); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const openActivity = (id) => setActivityId(id)
+  const completeActivity = (activity, score = null) => {
+    const alreadyDone = progress.completedActivityIds.includes(activity.id)
+    const completedActivityIds = alreadyDone ? progress.completedActivityIds : [...progress.completedActivityIds, activity.id]
+    const nextDraft = { ...progress, completedActivityIds, totalStudyMinutes: progress.totalStudyMinutes + (alreadyDone ? 0 : activity.duration), lastStudiedAt: new Date().toISOString(), results: { ...progress.results, [activity.id]: { attempts: (progress.results[activity.id]?.attempts ?? 0) + 1, score, completedAt: new Date().toISOString() } } }
+    const nextActivity = getNextActivity(nextDraft)
+    persist({ ...nextDraft, currentActivityId: nextActivity?.id ?? null })
+    setActivityId(null); setToastActivity(activity); window.setTimeout(() => setToastActivity(null), 4200)
+  }
+  const activity = activityId ? getActivity(activityId) : null
+  const selectedTier = selectedTierId ? getTier(selectedTierId) : null
+
+  return <div className="app-shell"><Sidebar active={active} onNavigate={(id) => { setActive(id); setSelectedTierId(null) }} open={menuOpen} onClose={() => setMenuOpen(false)} progress={progress} />{menuOpen && <button className="sidebar-scrim" onClick={() => setMenuOpen(false)} aria-label="Close navigation overlay" />}<main className="main"><Topbar title={titles[active]} onMenu={() => setMenuOpen(true)} />
+    {active === 'dashboard' && <Dashboard progress={progress} onOpenTier={openTier} onOpenActivity={openActivity} onNavigate={(id) => { setActive(id); setSelectedTierId(null) }} />}
+    {active === 'path' && (selectedTier ? <TierDetail tier={selectedTier} progress={progress} onBack={() => setSelectedTierId(null)} onOpenActivity={openActivity} /> : <PathView progress={progress} onOpenTier={openTier} />)}
+    {active === 'domains' && <DomainsView progress={progress} />}{active === 'progress' && <ProgressView progress={progress} />}{active === 'study-guide' && <StudyGuideView />}
+  </main>{showWelcome && <Onboarding onStart={() => finishOnboarding('start')} onExplore={() => finishOnboarding('path')} />}{activity && <ActivityView activity={activity} progress={progress} onClose={() => setActivityId(null)} onComplete={completeActivity} />}{toastActivity && <CompletionToast activity={toastActivity} onClose={() => setToastActivity(null)} />}</div>
+}
