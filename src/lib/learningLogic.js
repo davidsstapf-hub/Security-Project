@@ -12,7 +12,37 @@ export function getTierProgress(tier, progress) {
 }
 
 export function getNextActivity(progress) {
-  return allActivities.find((activity) => activity.required && !progress.completedActivityIds.includes(activity.id)) ?? null
+  return getRecommendation(progress).activity
+}
+
+export function getRecommendation(progress) {
+  const unfinished = allActivities.find((activity) => activity.required && !progress.completedActivityIds.includes(activity.id))
+  if (unfinished) return { activity: unfinished, reason: 'continue', review: false }
+
+  const weakResult = Object.entries(progress.results)
+    .filter(([, result]) => typeof result.score === 'number' && result.score < 0.8)
+    .sort(([, a], [, b]) => a.score - b.score)[0]
+
+  if (!weakResult) return { activity: null, reason: 'complete', review: false }
+  const weakActivity = allActivities.find((activity) => activity.id === weakResult[0])
+  if (!weakActivity) return { activity: null, reason: 'complete', review: false }
+  const reviewActivity = allActivities.find((activity) => activity.moduleId === weakActivity.moduleId && activity.type === 'flashcards')
+    ?? allActivities.find((activity) => activity.moduleId === weakActivity.moduleId && activity.type === 'lesson')
+    ?? weakActivity
+  return { activity: reviewActivity, reason: 'weak-score', review: true, sourceActivityId: weakActivity.id, score: weakResult[1].score }
+}
+
+export function getModuleProgress(module, progress) {
+  const required = module.activities.filter((activity) => activity.required)
+  if (!required.length) return 0
+  return Math.round(required.filter((activity) => progress.completedActivityIds.includes(activity.id)).length / required.length * 100)
+}
+
+export function moduleNeedsReview(module, progress) {
+  return module.activities.some((activity) => {
+    const score = progress.results[activity.id]?.score
+    return (activity.type === 'quiz' || activity.type === 'checkpoint') && typeof score === 'number' && score < 0.8
+  })
 }
 
 export function getDomainCoverage(progress) {

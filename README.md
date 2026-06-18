@@ -58,7 +58,7 @@ Security+Project/
 
 ## Current status
 
-The guided learning vertical slice is implemented with React and Vite. It includes a five-tier curriculum, complete Tier 1 lessons and checks, answer explanations, device-local progress, domain coverage, mobile-safe layouts, and Capacitor configuration for the future iOS app.
+The guided learning app is implemented with React and Vite. Tier 1 now contains six complete learning sections, worked scenarios, 85+ flashcards, coached knowledge checks, section quizzes, and a 20-question cumulative checkpoint. The app also includes review-aware recommendations, versioned device-local progress, domain coverage, mobile-safe layouts, and Capacitor configuration for the future iOS app.
 
 ## Run locally
 
@@ -77,13 +77,7 @@ The project uses Capacitor to package the same React app for iOS. Native project
 
 ## Recommended next milestone
 
-Build a small vertical slice:
-
-- domain dashboard;
-- one lesson from General Security Concepts;
-- a five-question quiz with explanations;
-- local progress tracking;
-- unit tests for scoring and mastery calculations.
+Validate the complete Tier 1 learning loop with real learners, address usability findings, and then author Tier 2 using the same section structure and content-integrity tests.
 
 ## Content and ethics
 

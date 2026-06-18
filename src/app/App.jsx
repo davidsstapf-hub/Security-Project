@@ -31,8 +31,9 @@ import {
   Zap,
 } from 'lucide-react'
 import { domains, getActivity, getTier, tiers } from '../content/studyData.js'
-import { getDomainCoverage, getNextActivity, getOverallProgress, getReadiness, getTierProgress } from '../lib/learningLogic.js'
+import { getDomainCoverage, getModuleProgress, getOverallProgress, getReadiness, getRecommendation, getTierProgress, moduleNeedsReview } from '../lib/learningLogic.js'
 import { progressRepository } from '../lib/progressRepository.js'
+import { ActivityView as LearningActivityView } from '../features/learn/LearningActivities.jsx'
 
 const navItems = [
   { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
@@ -78,13 +79,14 @@ function Onboarding({ onStart, onExplore }) {
 
 function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
   const readiness = getReadiness(progress)
-  const next = getNextActivity(progress)
+  const recommendation = getRecommendation(progress)
+  const next = recommendation.activity
   const nextTier = next ? getTier(`tier-${next.tierNumber}`) : tiers[tiers.length - 1]
   const tier1Progress = getTierProgress(tiers[0], progress)
   return <div className="page dashboard"><div className="circuit-field" aria-hidden="true">
     {Array.from({ length: 14 }, (_, index) => <span key={index}><i /></span>)}
   </div>
-    <section className="hero guided-hero"><div className="hero__grid" /><div className="hero__copy"><span className="status-pill"><i /> Tier 1 · Foundations</span><p className="eyebrow">Your recommended next step</p><h2>{next ? next.title : 'Foundations complete.'}<br /><em>{next ? `${next.duration} focused minutes.` : 'That deserves a victory lap.'}</em></h2><p>{next?.summary ?? 'Explore the next tier or review any activity whenever you like.'}</p><div className="hero__actions"><button className="button button--primary" onClick={() => next && onOpenActivity(next.id)}><Play size={17} fill="currentColor" />{next ? 'Continue learning' : 'Explore Tier 2'}<ArrowRight size={17} /></button><button className="button button--ghost" onClick={() => onOpenTier(nextTier.id)}><Layers3 size={17} />View tier</button></div></div>
+    <section className="hero guided-hero"><div className="hero__grid" /><div className="hero__copy"><span className="status-pill"><i /> {recommendation.review ? 'Review recommended' : 'Tier 1 · Foundations'}</span><p className="eyebrow">Your recommended next step</p><h2>{next ? next.title : 'Foundations complete.'}<br /><em>{next ? `${next.duration} focused minutes.` : 'That deserves a victory lap.'}</em></h2><p>{recommendation.review ? `A recent score below 80% suggests a quick review. ${next?.summary}` : next?.summary ?? 'Explore the next tier or review any activity whenever you like.'}</p><div className="hero__actions"><button className="button button--primary" onClick={() => next && onOpenActivity(next.id)}><Play size={17} fill="currentColor" />{recommendation.review ? 'Start review' : next ? 'Continue learning' : 'Explore Tier 2'}<ArrowRight size={17} /></button><button className="button button--ghost" onClick={() => onOpenTier(nextTier.id)}><Layers3 size={17} />View tier</button></div></div>
       <div className="hero__visual"><div className="orbit orbit--one" /><div className="orbit orbit--two" /><div className="readiness"><Ring value={tier1Progress} size={148} /><span>TIER 1 PROGRESS</span></div><div className="signal signal--one"><Activity size={14} /> {readiness}% exam ready</div><div className="signal signal--two"><LockKeyhole size={14} /> Path stays open</div></div>
     </section>
     <section className="stats-row"><article><span className="stat-icon stat-icon--green"><Clock3 size={19} /></span><div><p>Study time</p><strong>{progress.totalStudyMinutes} min</strong><small>saved on this device</small></div></article><article><span className="stat-icon stat-icon--orange"><Target size={19} /></span><div><p>Current tier</p><strong>Tier 1</strong><small>Foundations</small></div></article><article><span className="stat-icon stat-icon--blue"><Award size={19} /></span><div><p>Activities</p><strong>{progress.completedActivityIds.length}</strong><small>completed across the path</small></div></article><article><span className="stat-icon stat-icon--purple"><Gauge size={19} /></span><div><p>Readiness</p><strong>{readiness}%</strong><small>coverage + accuracy</small></div></article></section>
@@ -113,11 +115,11 @@ function TierDetail({ tier, progress, onBack, onOpenActivity }) {
   const value = getTierProgress(tier, progress)
   return <div className="page tier-detail-page" style={{ '--tier': tier.color }}><button className="back-button" onClick={onBack}><ArrowLeft size={16} /> Back to path</button><section className="tier-banner"><div><span className="status-pill"><i /> Tier {tier.number} of 5</span><p className="eyebrow">{tier.difficulty} · {tier.minutes} minutes</p><h2>{tier.title}</h2><p>{tier.subtitle}. {tier.modules[0].summary}</p></div><Ring value={value} color={tier.color} size={126} /></section>
     {tier.recommendedAfter && <div className="guidance-note"><Sparkles size={18} /><div><strong>Recommended after Tier {tier.recommendedAfter}, never locked.</strong><span>You can explore now. If anything feels unfamiliar, the earlier tier will build the missing context.</span></div></div>}
-    <div className="module-stack">{tier.modules.map((module, moduleIndex) => <section className="panel module-panel" key={module.id}><div className="module-heading"><span>0{moduleIndex + 1}</span><div><p className="eyebrow">Learning module</p><h3>{module.title}</h3><p>{module.summary}</p></div></div><div className="activity-list">{module.activities.map((activity, activityIndex) => {
+    <div className="module-stack">{tier.modules.map((module, moduleIndex) => { const moduleProgress = getModuleProgress(module, progress); const needsReview = moduleNeedsReview(module, progress); return <section className={`panel module-panel ${needsReview ? 'module-panel--review' : ''}`} key={module.id}><div className="module-heading"><span>0{moduleIndex + 1}</span><div className="module-heading__copy"><p className="eyebrow">Learning module</p><h3>{module.title}</h3><p>{module.summary}</p></div><div className="module-progress"><strong>{needsReview ? 'Review recommended' : `${moduleProgress}% complete`}</strong><i><em style={{ width: `${moduleProgress}%` }} /></i></div></div><div className="activity-list">{module.activities.map((activity, activityIndex) => {
       const done = progress.completedActivityIds.includes(activity.id)
       const hasContent = activity.content || activity.cards || activity.questions
       return <button key={activity.id} className={`activity-row ${done ? 'activity-row--done' : ''}`} onClick={() => onOpenActivity(activity.id)}><span className="activity-status">{done ? <Check size={17} /> : activityIndex + 1}</span><span className="activity-copy"><small>{typeLabels[activity.type]} · Domain {activity.domain} · Objective {activity.objective}</small><strong>{activity.title}</strong><em>{activity.summary}</em></span><span className="activity-time"><Clock3 size={14} />{activity.duration} min</span>{!hasContent && <span className="preview-badge">Preview</span>}<ChevronRight size={18} /></button>
-    })}</div></section>)}</div>
+    })}</div></section> })}</div>
   </div>
 }
 
@@ -198,7 +200,7 @@ export default function App() {
     const alreadyDone = progress.completedActivityIds.includes(activity.id)
     const completedActivityIds = alreadyDone ? progress.completedActivityIds : [...progress.completedActivityIds, activity.id]
     const nextDraft = { ...progress, completedActivityIds, totalStudyMinutes: progress.totalStudyMinutes + (alreadyDone ? 0 : activity.duration), lastStudiedAt: new Date().toISOString(), results: { ...progress.results, [activity.id]: { attempts: (progress.results[activity.id]?.attempts ?? 0) + 1, score, completedAt: new Date().toISOString() } } }
-    const nextActivity = getNextActivity(nextDraft)
+    const nextActivity = getRecommendation(nextDraft).activity
     persist({ ...nextDraft, currentActivityId: nextActivity?.id ?? null })
     setActivityId(null); setToastActivity(activity); window.setTimeout(() => setToastActivity(null), 4200)
   }
@@ -209,5 +211,5 @@ export default function App() {
     {active === 'dashboard' && <Dashboard progress={progress} onOpenTier={openTier} onOpenActivity={openActivity} onNavigate={(id) => { setActive(id); setSelectedTierId(null) }} />}
     {active === 'path' && (selectedTier ? <TierDetail tier={selectedTier} progress={progress} onBack={() => setSelectedTierId(null)} onOpenActivity={openActivity} /> : <PathView progress={progress} onOpenTier={openTier} />)}
     {active === 'domains' && <DomainsView progress={progress} />}{active === 'progress' && <ProgressView progress={progress} />}{active === 'study-guide' && <StudyGuideView />}
-  </main>{showWelcome && <Onboarding onStart={() => finishOnboarding('start')} onExplore={() => finishOnboarding('path')} />}{activity && <ActivityView activity={activity} progress={progress} onClose={() => setActivityId(null)} onComplete={completeActivity} />}{toastActivity && <CompletionToast activity={toastActivity} onClose={() => setToastActivity(null)} />}</div>
+  </main>{showWelcome && <Onboarding onStart={() => finishOnboarding('start')} onExplore={() => finishOnboarding('path')} />}{activity && <LearningActivityView activity={activity} progress={progress} onClose={() => setActivityId(null)} onComplete={completeActivity} />}{toastActivity && <CompletionToast activity={toastActivity} onClose={() => setToastActivity(null)} />}</div>
 }
