@@ -5,6 +5,7 @@ import { tier4QuestionBanks } from "./tier4QuestionBanks.js";
 import { tier4Lessons } from "./tier4Lessons.js";
 import { tier5Lessons } from "./tier5Lessons.js";
 import { tier5Scenarios } from "./tier5Scenarios.js";
+import { tier5QuestionBanks } from "./tier5QuestionBanks.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1809,7 +1810,7 @@ for (const [
     ],
     terms,
     scenario,
-    questions: tier === 3 ? tier3QuestionBanks[id] : tier === 4 ? tier4QuestionBanks[id] : undefined,
+    questions: tier === 3 ? tier3QuestionBanks[id] : tier === 4 ? tier4QuestionBanks[id] : tier === 5 ? tier5QuestionBanks[id] : undefined,
   });
   if (tier === 4 && tier4Lessons[id]) {
     specs[specs.length - 1].headings = [...tier4Lessons[id].headings];

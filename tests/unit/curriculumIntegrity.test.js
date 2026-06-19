@@ -279,3 +279,23 @@ test('Tier 5 core lessons and scenarios are substantive and distinct', () => {
     assert.ok(scenario.explanation.length >= 180, scenario.id)
   }
 })
+
+test('Tier 5 authored assessment debt is reduced to the final three sections', () => {
+  const assessments = tiers.find((tier) => tier.number === 5).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
+  const questions = assessments.flatMap((activity) => activity.questions)
+  assert.equal(questions.length, 90)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
+})
+
+test('Tier 5 governance, risk, and third-party assessments use authored application questions', () => {
+  for (const section of ['governance', 'risk', 'third-party']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t5-${section}-check` || activity.id === `t5-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
+})
