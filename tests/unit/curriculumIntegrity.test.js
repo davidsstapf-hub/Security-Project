@@ -206,13 +206,32 @@ test('Tier 4 scenarios use distinct operational evidence and decisions', () => {
   }
 })
 
-test('Tier 4 authored assessment debt is reduced to the final three core sections', () => {
+test('Tier 4 core assessments contain no generated definition-match questions', () => {
   const assessments = tiers.find((tier) => tier.number === 4).modules
     .flatMap((module) => module.activities)
     .filter((activity) => /^t4-(assets|vulnerability-management|iam-operations|monitoring|incident-response|forensics)-(check|quiz)$/.test(activity.id))
   const questions = assessments.flatMap((activity) => activity.questions)
   assert.equal(questions.length, 90)
-  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 0)
+  assert.equal(new Set(questions.map((question) => question.prompt)).size, 90)
+})
+
+test('Tier 4 monitoring, incident-response, and forensics assessments use authored application questions', () => {
+  for (const section of ['monitoring', 'incident-response', 'forensics']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t4-${section}-check` || activity.id === `t4-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
+})
+
+test('Tier 4 checkpoint uses authored questions from all core sections', () => {
+  const checkpoint = allActivities.find((activity) => activity.id === 't4-checkpoint')
+  assert.equal(checkpoint.questions.length, 20)
+  assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
+  assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
 test('Tier 4 asset, vulnerability, and IAM assessments use authored application questions', () => {
