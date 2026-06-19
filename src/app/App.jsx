@@ -1073,7 +1073,7 @@ function LessonActivity({ activity, onComplete, completed }) {
       </div>
       {activity.media && (
         <figure className="lesson-media">
-          <img src={activity.media.src} alt={activity.media.alt} />
+          <img src={`${import.meta.env.BASE_URL}${activity.media.src.replace(/^\/+/, '')}`} alt={activity.media.alt} />
           <figcaption>{activity.media.caption}</figcaption>
         </figure>
       )}
