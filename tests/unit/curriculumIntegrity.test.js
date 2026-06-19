@@ -188,3 +188,20 @@ test('Tier 3 scenarios use distinct architecture evidence and decisions', () => 
     assert.ok(scenario.explanation.length >= 180, scenario.id)
   }
 })
+
+test('Tier 4 scenarios use distinct operational evidence and decisions', () => {
+  const scenarios = tiers.find((tier) => tier.number === 4).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.type === 'scenario')
+  assert.equal(scenarios.length, 8)
+  const operationalScenarios = scenarios.filter((scenario) => scenario.id !== 't4-enterprise-capabilities-scenario')
+  assert.equal(operationalScenarios.length, 7)
+  assert.equal(new Set(operationalScenarios.map((scenario) => scenario.evidence.join('|'))).size, 7)
+  assert.equal(new Set(operationalScenarios.map((scenario) => scenario.actions.map((action) => action.label).join('|'))).size, 7)
+  assert.ok(operationalScenarios.every((scenario) => !scenario.evidence.some((item) => item.startsWith('The decision depends on'))))
+  for (const scenario of operationalScenarios) {
+    assert.equal(scenario.evidence.length, 3, scenario.id)
+    assert.equal(scenario.actions.filter((action) => action.correct).length, 3, scenario.id)
+    assert.ok(scenario.explanation.length >= 180, scenario.id)
+  }
+})

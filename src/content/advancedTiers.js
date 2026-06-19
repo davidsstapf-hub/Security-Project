@@ -1,5 +1,6 @@
 import { tier3ArchitectureLab, tier3Scenarios } from "./tier3Scenarios.js";
 import { tier3QuestionBanks } from "./tier3QuestionBanks.js";
+import { tier4InvestigationLab, tier4Scenarios } from "./tier4Scenarios.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1737,15 +1738,16 @@ for (const [
   );
   const pair = (index) =>
     `${terms[index][0]} means ${terms[index][1].charAt(0).toLowerCase()}${terms[index][1].slice(1)} ${terms[index + 1][0]} means ${terms[index + 1][1].charAt(0).toLowerCase()}${terms[index + 1][1].slice(1)}`;
-  const scenario = tier === 3
-    ? { ...tier3Scenarios[id], evidence:[...tier3Scenarios[id].evidence], actions:tier3Scenarios[id].actions.map((action) => ({...action})), hints:[...tier3Scenarios[id].hints] }
+  const authoredScenario = tier === 3 ? tier3Scenarios[id] : tier === 4 ? tier4Scenarios[id] : undefined;
+  const scenario = authoredScenario
+    ? { ...authoredScenario, evidence:[...authoredScenario.evidence], actions:authoredScenario.actions.map((action) => ({...action})), hints:[...authoredScenario.hints] }
     : genericScenario(`A ${title.toLowerCase()} decision under pressure`, title.toLowerCase());
-  if (tier !== 3) scenario.evidence = [
+  if (!authoredScenario) scenario.evidence = [
     `The decision depends on ${terms[0][0]} and ${terms[1][0]}.`,
     `A gap involving ${terms[4][0]} creates a credible business impact.`,
     `The accountable team has not validated ${terms[8][0]}.`,
   ];
-  if (tier !== 3) scenario.actions = [
+  if (!authoredScenario) scenario.actions = [
     {
       id: "scope",
       label: `Establish scope using ${terms[0][0]} and ${terms[1][0]}`,
@@ -1922,10 +1924,7 @@ export const advancedTiers = Object.values(tierMeta).map((tier) => {
           difficulty: "advanced",
           summary:
             "Correlate alerts, preserve evidence, and contain the incident.",
-          ...genericScenario(
-            "A suspicious administrator session",
-            "incident investigation",
-          ),
+          ...tier4InvestigationLab,
         },
       ],
     });
