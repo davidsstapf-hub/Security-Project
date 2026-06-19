@@ -234,6 +234,18 @@ test('Tier 4 checkpoint uses authored questions from all core sections', () => {
   assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
+test('Tier 4 core lessons use substantive authored instruction', () => {
+  const lessons = ['assets', 'vulnerability-management', 'iam-operations', 'monitoring', 'incident-response', 'forensics']
+    .map((section) => allActivities.find((activity) => activity.id === `t4-${section}`))
+  assert.equal(lessons.length, 6)
+  for (const lesson of lessons) {
+    assert.equal(lesson.headings.length, 6, lesson.id)
+    assert.equal(lesson.content.length, 6, lesson.id)
+    assert.ok(lesson.content.every((segment) => segment.length >= 240), lesson.id)
+    assert.ok(lesson.content.every((segment) => !segment.includes('means ')), lesson.id)
+  }
+})
+
 test('Tier 4 asset, vulnerability, and IAM assessments use authored application questions', () => {
   for (const section of ['assets', 'vulnerability-management', 'iam-operations']) {
     const questions = allActivities

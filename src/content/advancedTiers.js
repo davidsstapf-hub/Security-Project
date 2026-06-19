@@ -2,6 +2,7 @@ import { tier3ArchitectureLab, tier3Scenarios } from "./tier3Scenarios.js";
 import { tier3QuestionBanks } from "./tier3QuestionBanks.js";
 import { tier4InvestigationLab, tier4Scenarios } from "./tier4Scenarios.js";
 import { tier4QuestionBanks } from "./tier4QuestionBanks.js";
+import { tier4Lessons } from "./tier4Lessons.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1808,6 +1809,10 @@ for (const [
     scenario,
     questions: tier === 3 ? tier3QuestionBanks[id] : tier === 4 ? tier4QuestionBanks[id] : undefined,
   });
+  if (tier === 4 && tier4Lessons[id]) {
+    specs[specs.length - 1].headings = [...tier4Lessons[id].headings];
+    specs[specs.length - 1].reading = [...tier4Lessons[id].content];
+  }
 }
 
 function makeCheckpoint(tier, sections) {
