@@ -438,11 +438,14 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
 }
 
 function TierRail({ progress, onOpenTier, compact = false }) {
+  const recommendedTier =
+    tiers.find((tier) => getTierProgress(tier, progress) < 100) ??
+    tiers[tiers.length - 1];
   return (
     <div className={`tier-rail ${compact ? "tier-rail--compact" : ""}`}>
       {tiers.map((tier, index) => {
         const value = getTierProgress(tier, progress);
-        const recommended = tier.number === 1 && value < 100;
+        const recommended = tier.id === recommendedTier.id;
         return (
           <button
             key={tier.id}
@@ -456,7 +459,9 @@ function TierRail({ progress, onOpenTier, compact = false }) {
             <span className="tier-node__copy">
               <small>
                 {recommended
-                  ? "Recommended start"
+                  ? value > 0
+                    ? "Continue here"
+                    : "Recommended next"
                   : tier.recommendedAfter
                     ? `Best after Tier ${tier.recommendedAfter}`
                     : "Start here"}
