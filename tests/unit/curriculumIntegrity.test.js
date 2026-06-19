@@ -126,3 +126,12 @@ test('Tier 2 checkpoint is built entirely from authored application questions', 
   assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
   assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
+
+test('Tier 3 generated assessment debt remains measurable until rewritten', () => {
+  const assessments = tiers.find((tier) => tier.number === 3).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
+  const questions = assessments.flatMap((activity) => activity.questions)
+  assert.equal(questions.length, 90)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 90)
+})
