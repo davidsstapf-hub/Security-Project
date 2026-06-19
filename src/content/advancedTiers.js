@@ -1,3 +1,5 @@
+import { tier3ArchitectureLab, tier3Scenarios } from "./tier3Scenarios.js";
+
 const letters = ["A", "B", "C", "D"];
 
 function makeQuestions(section, count, offset, prefix) {
@@ -1734,16 +1736,15 @@ for (const [
   );
   const pair = (index) =>
     `${terms[index][0]} means ${terms[index][1].charAt(0).toLowerCase()}${terms[index][1].slice(1)} ${terms[index + 1][0]} means ${terms[index + 1][1].charAt(0).toLowerCase()}${terms[index + 1][1].slice(1)}`;
-  const scenario = genericScenario(
-    `A ${title.toLowerCase()} decision under pressure`,
-    title.toLowerCase(),
-  );
-  scenario.evidence = [
+  const scenario = tier === 3
+    ? { ...tier3Scenarios[id], evidence:[...tier3Scenarios[id].evidence], actions:tier3Scenarios[id].actions.map((action) => ({...action})), hints:[...tier3Scenarios[id].hints] }
+    : genericScenario(`A ${title.toLowerCase()} decision under pressure`, title.toLowerCase());
+  if (tier !== 3) scenario.evidence = [
     `The decision depends on ${terms[0][0]} and ${terms[1][0]}.`,
     `A gap involving ${terms[4][0]} creates a credible business impact.`,
     `The accountable team has not validated ${terms[8][0]}.`,
   ];
-  scenario.actions = [
+  if (tier !== 3) scenario.actions = [
     {
       id: "scope",
       label: `Establish scope using ${terms[0][0]} and ${terms[1][0]}`,
@@ -1898,10 +1899,7 @@ export const advancedTiers = Object.values(tierMeta).map((tier) => {
           objective: "3.1–3.4",
           difficulty: "applied",
           summary: "Design a resilient service from competing requirements.",
-          ...genericScenario(
-            "A regional service redesign",
-            "resilient architecture",
-          ),
+          ...tier3ArchitectureLab,
         },
       ],
     });

@@ -135,3 +135,17 @@ test('Tier 3 generated assessment debt remains measurable until rewritten', () =
   assert.equal(questions.length, 90)
   assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 90)
 })
+
+test('Tier 3 scenarios use distinct architecture evidence and decisions', () => {
+  const scenarios = tiers.find((tier) => tier.number === 3).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.type === 'scenario')
+  assert.equal(scenarios.length, 7)
+  assert.equal(new Set(scenarios.map((scenario) => scenario.evidence.join('|'))).size, 7)
+  assert.equal(new Set(scenarios.map((scenario) => scenario.actions.map((action) => action.label).join('|'))).size, 7)
+  for (const scenario of scenarios) {
+    assert.equal(scenario.evidence.length, 3, scenario.id)
+    assert.equal(scenario.actions.filter((action) => action.correct).length, 3, scenario.id)
+    assert.ok(scenario.explanation.length >= 180, scenario.id)
+  }
+})

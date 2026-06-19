@@ -13,11 +13,11 @@ Status: **In progress - release-blocking findings open**
 
 ## Findings
 
-### Critical - six section scenarios reuse one decision template
+### Resolved - six section scenarios reused one decision template
 
-Each scenario changes topic labels but inherits the same evidence structure, three generic correct actions, two generic incorrect actions, and shared debrief. Learners do not yet practice materially different architecture decisions.
+All six sections now use distinct architecture evidence, decisions, hints, and debriefs covering platform constraints, shared responsibility, control placement, data sovereignty, PKI troubleshooting, and recovery targets.
 
-Required resolution:
+Resolution completed:
 
 - Architecture models: choose an appropriate platform under patching, availability, and operational constraints.
 - Shared responsibility: assign cloud security duties without responsibility gaps.
@@ -25,7 +25,7 @@ Required resolution:
 - Data lifecycle: balance classification, sovereignty, states, retention, and protection methods.
 - Applied cryptography: diagnose certificate, key-management, and protocol decisions.
 - Resilience: select recovery architecture from RTO, RPO, dependency, and cost evidence.
-- Preserve all existing scenario activity IDs.
+- Preserved all existing scenario activity IDs.
 
 ### Critical - all 90 section questions are generated definition matches
 
@@ -47,11 +47,11 @@ Required resolution:
 - Retain balanced coverage across all six sections.
 - Include cross-section design choices involving confidentiality, availability, cost, and recovery.
 
-### High - resilient-architecture lab is still generic
+### Resolved - resilient-architecture lab was generic
 
-The required Tier 3 lab declares the correct tradeoff goals but does not provide architecture-specific evidence or decisions.
+The capstone now uses a regulated healthcare scheduling redesign with explicit RTO, RPO, residency, cost, tier-separation, and recovery tradeoffs.
 
-Required resolution:
+Resolution completed:
 
 - Add business requirements, failure assumptions, recovery targets, dependencies, and cost constraints.
 - Score choices that demonstrate explicit tradeoff reasoning rather than generic evidence preservation.
