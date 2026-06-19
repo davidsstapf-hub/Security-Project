@@ -308,6 +308,23 @@ test('Tier 5 checkpoint uses authored questions from all six sections', () => {
   assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
+test('Tier 5 comprehensive exam is built entirely from authored questions', () => {
+  const exam = allActivities.find((activity) => activity.id === 't5-final-exam')
+  assert.equal(exam.questions.length, 76)
+  assert.equal(new Set(exam.questions.map((question) => question.prompt)).size, 76)
+  assert.ok(exam.questions.every((question) => !question.prompt.includes('which term best matches this description')))
+  assert.ok(exam.questions.every((question) => question.explanation?.length >= 40))
+  assert.deepEqual(Object.fromEntries([1,2,3,4,5].map((domain) => [domain,exam.questions.filter((question) => question.domain === domain).length])), {1:9,2:17,3:14,4:21,5:15})
+})
+
+test('Tier 5 cross-domain scenario contains technical and governance decisions', () => {
+  const scenario = allActivities.find((activity) => activity.id === 't5-cross-domain-pbq')
+  assert.equal(scenario.evidence.length, 3)
+  assert.equal(scenario.actions.filter((action) => action.correct).length, 3)
+  assert.ok(scenario.evidence.join(' ').length >= 500)
+  assert.ok(scenario.explanation.length >= 350)
+})
+
 test('Tier 5 governance, risk, and third-party assessments use authored application questions', () => {
   for (const section of ['governance', 'risk', 'third-party']) {
     const questions = allActivities

@@ -1977,26 +1977,26 @@ export const finalScenario = {
   difficulty: "synthesis",
   summary: "Apply all five domains to a supplier-enabled cloud incident",
   instructions:
-    "Review the evidence and choose the coordinated actions that address governance, architecture, operations, threats, and communication.",
+    "Review the identity, architecture, data, operational, and contractual evidence. Choose the three coordinated actions that best contain the incident, preserve evidence, determine impact, and meet accountable business obligations.",
   evidence: [
-    "A supplier account accessed cloud storage from a new location.",
-    "Sensitive exports occurred before the alert was triaged.",
-    "The contract contains a four-hour incident notification clause.",
+    "A named supplier administrator authenticated from a new country using a valid session token, created an access key, and queried a cloud bucket containing regulated customer exports.",
+    "Cloud logs show 18 GB downloaded through a path that bypassed the normal application tier; the bucket policy also permits a broader supplier role than the contract requires.",
+    "The supplier contract requires notification within four hours, the records span two privacy jurisdictions, and log retention will overwrite detailed object-access events in six hours.",
   ],
   actions: [
     {
       id: "revoke",
-      label: "Revoke supplier sessions and preserve identity logs",
+      label: "Revoke supplier sessions and keys, restrict the overbroad role and storage path, and preserve expiring identity and object-access logs",
       correct: true,
     },
     {
       id: "scope",
-      label: "Scope accessed data and affected obligations",
+      label: "Determine which records were accessed, classify affected data and jurisdictions, and search for the same indicators across cloud and identity systems",
       correct: true,
     },
     {
       id: "notify",
-      label: "Engage incident, legal, privacy, and supplier owners",
+      label: "Activate incident, legal, privacy, procurement, data-owner, and supplier contacts within the contractual decision timeline",
       correct: true,
     },
     {
@@ -2017,7 +2017,7 @@ export const finalScenario = {
   },
   hints: ["A technical incident can create contractual and privacy duties."],
   explanation:
-    "A sound response contains access, preserves evidence, establishes scope, and activates accountable business owners within contractual timelines.",
+    "The coordinated response addresses every domain: token and key abuse require threat containment; the bypass path and broad role require architecture correction; expiring logs require operational preservation and scoping; regulated exports require data-owner and privacy analysis; and the notification clause requires governance and supplier coordination. Deleting evidence or waiting for the supplier would increase both technical and organizational harm.",
 };
 
 export const finalExam = {
