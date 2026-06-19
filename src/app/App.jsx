@@ -741,7 +741,6 @@ function DomainsView({ progress }) {
               style={{ "--domain": domain.color }}
               onClick={() => setSelected(domain)}
             >
-              <span className="domain-card__number">0{domain.id}</span>
               <span className="domain-card__icon">
                 <Icon size={22} />
               </span>
