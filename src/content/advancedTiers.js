@@ -1,4 +1,5 @@
 import { tier3ArchitectureLab, tier3Scenarios } from "./tier3Scenarios.js";
+import { tier3QuestionBanks } from "./tier3QuestionBanks.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1802,6 +1803,7 @@ for (const [
     ],
     terms,
     scenario,
+    questions: tier === 3 ? tier3QuestionBanks[id] : undefined,
   });
 }
 

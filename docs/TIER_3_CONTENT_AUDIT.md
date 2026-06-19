@@ -37,6 +37,8 @@ Required resolution:
 - Mix architecture tradeoffs, responsibility assignment, control placement, data decisions, cryptographic troubleshooting, and recovery calculations.
 - Use plausible competing designs and common misconceptions as distractors.
 
+Progress: the 15 Architecture Models questions are now authored application questions. The remaining 75 generated questions are still open.
+
 ### High - checkpoint inherits definition-only assessment material
 
 The checkpoint represents all six sections but currently selects from the generated section quizzes.

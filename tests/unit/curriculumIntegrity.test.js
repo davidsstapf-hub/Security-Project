@@ -133,7 +133,16 @@ test('Tier 3 generated assessment debt remains measurable until rewritten', () =
     .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
   const questions = assessments.flatMap((activity) => activity.questions)
   assert.equal(questions.length, 90)
-  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 90)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 75)
+})
+
+test('Tier 3 architecture-model assessments use authored application questions', () => {
+  const questions = allActivities
+    .filter((activity) => activity.id === 't3-platforms-check' || activity.id === 't3-platforms-quiz')
+    .flatMap((activity) => activity.questions)
+  assert.equal(questions.length, 15)
+  assert.equal(new Set(questions.map((question) => question.prompt)).size, 15)
+  assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
 test('Tier 3 scenarios use distinct architecture evidence and decisions', () => {
