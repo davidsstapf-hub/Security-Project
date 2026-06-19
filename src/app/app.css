@@ -436,3 +436,25 @@ body {
   .activity-row { margin-inline: 0; padding-inline: 7px; }
   .stats-row strong { font-size: 20px; }
 }
+
+.objective-visual { position: relative; margin: -20px 0 58px; padding: 22px; overflow: hidden; border: 1px solid rgba(0,217,255,.2); border-radius: 22px; background: linear-gradient(135deg,rgba(0,217,255,.095),rgba(124,92,255,.055) 52%,rgba(255,190,92,.035)); box-shadow: 0 24px 70px rgba(0,0,0,.24); }
+.objective-visual::before { content:""; position:absolute; inset:0; opacity:.52; background: radial-gradient(circle at 18% 16%,rgba(0,217,255,.22),transparent 26%), radial-gradient(circle at 86% 20%,rgba(124,92,255,.18),transparent 28%), linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size: auto,auto,44px 44px,44px 44px; pointer-events:none; }
+.objective-visual__header, .objective-visual__diagram { position: relative; z-index: 1; }
+.objective-visual__header { display:grid; gap:8px; max-width: 650px; }
+.objective-visual__header h2 { margin:0; color:#f4fbff; font-size: clamp(22px,3vw,31px); line-height:1.1; letter-spacing:-.045em; }
+.objective-visual__header p { margin:0; color:#a8c0c9; font-size:13px; line-height:1.65; }
+.objective-visual__diagram { margin-top:20px; display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+.objective-visual__node { min-height:112px; padding:15px; display:flex; flex-direction:column; justify-content:space-between; gap:12px; border:1px solid rgba(139,231,255,.18); border-radius:16px; background: rgba(3,13,17,.72); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+.objective-visual__node b { color:#eafaff; font-size:13px; line-height:1.2; letter-spacing:-.015em; }
+.objective-visual__node span { color:#8fb0bb; font-size:11px; line-height:1.45; }
+.objective-visual__node::before { content: counter(step); counter-increment: step; width:28px; height:28px; display:grid; place-items:center; border-radius:10px; color:#051014; background: var(--green); font:700 12px 'DM Mono',monospace; box-shadow:0 0 24px rgba(0,217,255,.24); }
+.objective-visual__diagram { counter-reset: step; }
+.objective-visual--triad .objective-visual__diagram { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.objective-visual--flow .objective-visual__node, .objective-visual--attack .objective-visual__node, .objective-visual--timeline .objective-visual__node, .objective-visual--signal .objective-visual__node { position:relative; }
+.objective-visual--flow .objective-visual__node:not(:last-child)::after, .objective-visual--attack .objective-visual__node:not(:last-child)::after, .objective-visual--timeline .objective-visual__node:not(:last-child)::after, .objective-visual--signal .objective-visual__node:not(:last-child)::after { content:"→"; position:absolute; right:-13px; top:50%; transform:translateY(-50%); color:var(--green); font-size:18px; z-index:2; text-shadow:0 0 14px rgba(0,217,255,.5); }
+.objective-visual--stack .objective-visual__diagram, .objective-visual--governance .objective-visual__diagram { grid-template-columns: 1fr; }
+.objective-visual--stack .objective-visual__node, .objective-visual--governance .objective-visual__node { min-height:auto; flex-direction:row; align-items:center; justify-content:flex-start; }
+.objective-visual--stack .objective-visual__node::before, .objective-visual--governance .objective-visual__node::before { flex:0 0 auto; }
+.objective-visual--funnel .objective-visual__node { clip-path: polygon(7% 0,93% 0,100% 100%,0 100%); }
+.objective-visual--risk .objective-visual__diagram, .objective-visual--lifecycle .objective-visual__diagram, .objective-visual--identity .objective-visual__diagram, .objective-visual--resilience .objective-visual__diagram { border-radius:999px; padding:10px; border:1px dashed rgba(0,217,255,.24); }
+@media (max-width: 760px) { .objective-visual { margin: -8px 0 42px; padding:18px; border-radius:17px; } .objective-visual__diagram, .objective-visual--triad .objective-visual__diagram { grid-template-columns:1fr; } .objective-visual__node { min-height:auto; } .objective-visual--flow .objective-visual__node:not(:last-child)::after, .objective-visual--attack .objective-visual__node:not(:last-child)::after, .objective-visual--timeline .objective-visual__node:not(:last-child)::after, .objective-visual--signal .objective-visual__node:not(:last-child)::after { content:"↓"; right:50%; top:auto; bottom:-18px; transform:translateX(50%); } }

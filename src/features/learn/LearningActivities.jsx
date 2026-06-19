@@ -10,12 +10,36 @@ import {
   Trophy,
 } from "lucide-react";
 import { activityTypeLabels as typeLabels } from "../../content/advancedTiers.js";
+import { getObjectiveVisual } from "../../content/objectiveVisuals.js";
 import {
   isValidQuestionOrder,
   shuffleQuestionOrder,
 } from "../../lib/examOrder.js";
 
+function ObjectiveVisual({ visual }) {
+  if (!visual) return null;
+  const summary = `${visual.title}: ${visual.items.map((item) => `${item.label}, ${item.value}`).join("; ")}`;
+  return (
+    <section className={`objective-visual objective-visual--${visual.theme}`} aria-label={summary}>
+      <div className="objective-visual__header">
+        <span className="eyebrow">Objective map</span>
+        <h2>{visual.title}</h2>
+        <p>{visual.caption}</p>
+      </div>
+      <div className="objective-visual__diagram" aria-hidden="true">
+        {visual.items.map((item, index) => (
+          <div className="objective-visual__node" key={`${visual.title}-${item.label}`} style={{ "--node-index": index }}>
+            <b>{item.label}</b>
+            <span>{item.value}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function LessonActivity({ activity, onComplete, completed, nextTitle }) {
+  const objectiveVisual = getObjectiveVisual(activity);
   return (
     <>
       <div className="lesson-objective">
@@ -40,6 +64,8 @@ export function LessonActivity({ activity, onComplete, completed, nextTitle }) {
           ))}
         </section>
       )}
+      <ObjectiveVisual visual={objectiveVisual} />
+
       <article className="lesson-body">
         {activity.content.map((paragraph, index) => (
           <div className="lesson-section" key={paragraph}>
