@@ -256,3 +256,26 @@ test('Tier 4 asset, vulnerability, and IAM assessments use authored application 
     assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
   }
 })
+
+test('Tier 5 core lessons and scenarios are substantive and distinct', () => {
+  const tier = tiers.find((item) => item.number === 5)
+  const activities = tier.modules.flatMap((module) => module.activities)
+  const lessons = activities.filter((activity) => activity.type === 'lesson')
+  const scenarios = activities.filter((activity) => activity.type === 'scenario' && activity.id !== 't5-cross-domain-pbq')
+  assert.equal(lessons.length, 6)
+  assert.equal(scenarios.length, 6)
+  for (const lesson of lessons) {
+    assert.equal(lesson.headings.length, 6, lesson.id)
+    assert.equal(lesson.content.length, 6, lesson.id)
+    assert.ok(lesson.content.every((segment) => segment.length >= 240), lesson.id)
+    assert.ok(lesson.content.every((segment) => !segment.includes('means ')), lesson.id)
+  }
+  assert.equal(new Set(scenarios.map((scenario) => scenario.evidence.join('|'))).size, 6)
+  assert.equal(new Set(scenarios.map((scenario) => scenario.actions.map((action) => action.label).join('|'))).size, 6)
+  assert.ok(scenarios.every((scenario) => !scenario.evidence.some((item) => item.startsWith('The decision depends on'))))
+  for (const scenario of scenarios) {
+    assert.equal(scenario.evidence.length, 3, scenario.id)
+    assert.equal(scenario.actions.filter((action) => action.correct).length, 3, scenario.id)
+    assert.ok(scenario.explanation.length >= 180, scenario.id)
+  }
+})

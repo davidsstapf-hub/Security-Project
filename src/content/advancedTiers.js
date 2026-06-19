@@ -3,6 +3,8 @@ import { tier3QuestionBanks } from "./tier3QuestionBanks.js";
 import { tier4InvestigationLab, tier4Scenarios } from "./tier4Scenarios.js";
 import { tier4QuestionBanks } from "./tier4QuestionBanks.js";
 import { tier4Lessons } from "./tier4Lessons.js";
+import { tier5Lessons } from "./tier5Lessons.js";
+import { tier5Scenarios } from "./tier5Scenarios.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1740,7 +1742,7 @@ for (const [
   );
   const pair = (index) =>
     `${terms[index][0]} means ${terms[index][1].charAt(0).toLowerCase()}${terms[index][1].slice(1)} ${terms[index + 1][0]} means ${terms[index + 1][1].charAt(0).toLowerCase()}${terms[index + 1][1].slice(1)}`;
-  const authoredScenario = tier === 3 ? tier3Scenarios[id] : tier === 4 ? tier4Scenarios[id] : undefined;
+  const authoredScenario = tier === 3 ? tier3Scenarios[id] : tier === 4 ? tier4Scenarios[id] : tier === 5 ? tier5Scenarios[id] : undefined;
   const scenario = authoredScenario
     ? { ...authoredScenario, evidence:[...authoredScenario.evidence], actions:authoredScenario.actions.map((action) => ({...action})), hints:[...authoredScenario.hints] }
     : genericScenario(`A ${title.toLowerCase()} decision under pressure`, title.toLowerCase());
@@ -1812,6 +1814,10 @@ for (const [
   if (tier === 4 && tier4Lessons[id]) {
     specs[specs.length - 1].headings = [...tier4Lessons[id].headings];
     specs[specs.length - 1].reading = [...tier4Lessons[id].content];
+  }
+  if (tier === 5 && tier5Lessons[id]) {
+    specs[specs.length - 1].headings = [...tier5Lessons[id].headings];
+    specs[specs.length - 1].reading = [...tier5Lessons[id].content];
   }
 }
 
