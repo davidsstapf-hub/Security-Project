@@ -32,6 +32,7 @@
 
 - [x] Tier 1 — Foundations
 - [x] Tier 2 — Systems & Threats
+- [ ] Resolve Tier 2 publication findings in `docs/TIER_2_CONTENT_AUDIT.md`
 - [x] Tier 3 — Secure Architecture and resilient-architecture lab
 - [x] Tier 4 — Security Operations and staged investigation
 - [x] Tier 5 — Governance, cross-domain scenario, and timed practice exam
