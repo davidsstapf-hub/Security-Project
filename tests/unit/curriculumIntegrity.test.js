@@ -5,8 +5,18 @@ import { buildTraceabilityMatrix, curriculumMetadata } from '../../src/content/c
 
 test('objective verification is an explicit release gate', () => {
   assert.equal(curriculumMetadata.examCode, 'SY0-701')
+  assert.equal(curriculumMetadata.objectiveDocumentVersion, '7.0')
+  assert.equal(curriculumMetadata.objectiveExamVersion, 'SY0-701 V7')
+  assert.ok(curriculumMetadata.objectiveReviewedAt)
   assert.equal(typeof curriculumMetadata.objectiveVersionVerified, 'boolean')
   if (curriculumMetadata.objectiveVersionVerified) assert.ok(curriculumMetadata.verifiedAt)
+})
+
+test('official objective coverage gaps stay visible until resolved', () => {
+  const declared = allActivities.map((activity) => String(activity.objective))
+  assert.equal(declared.some((objective) => objective.includes('1.3')), false)
+  assert.equal(declared.some((objective) => objective.includes('4.5')), false)
+  assert.equal(curriculumMetadata.objectiveVersionVerified, false)
 })
 
 test('traceability rows connect objectives to concrete activities', () => {

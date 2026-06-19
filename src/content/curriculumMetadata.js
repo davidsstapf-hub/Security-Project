@@ -3,9 +3,13 @@ export const curriculumMetadata = {
   examCode: 'SY0-701',
   objectiveSource: 'Official CompTIA Security+ SY0-701 exam objectives PDF',
   objectiveSourceUrl: 'https://www.comptia.org/en-us/certifications/security/',
+  objectiveDocumentVersion: '7.0',
+  objectiveExamVersion: 'SY0-701 V7',
+  objectiveDocumentDate: '2023-01',
+  objectiveReviewedAt: '2026-06-18',
   objectiveVersionVerified: false,
   verifiedAt: null,
-  verificationNote: 'Publication is blocked until the official objectives PDF is reviewed and its version/date recorded.',
+  verificationNote: 'Official V7 objectives reviewed; publication remains blocked while objective 1.3 and 4.5 coverage gaps are resolved and detailed bullet-level traceability is completed.',
   contentSchemaVersion: 2,
 }
 

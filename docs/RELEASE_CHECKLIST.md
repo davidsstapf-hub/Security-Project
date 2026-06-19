@@ -2,7 +2,9 @@
 
 ## Objective and content review
 
-- [ ] Obtain and archive the latest official SY0-701 objectives PDF.
+- [x] Obtain and review the official SY0-701 V7 objectives PDF (document version 7.0).
+- [ ] Resolve objective 1.3 and 4.5 coverage gaps found during official review.
+- [ ] Complete detailed bullet-level traceability and mark curriculum metadata verified.
 - [ ] Record its published version and review date in `curriculumMetadata.js`.
 - [ ] Compare every traceability row with the official sub-objectives.
 - [ ] Resolve missing, duplicated, incorrectly mapped, and out-of-scope coverage.
