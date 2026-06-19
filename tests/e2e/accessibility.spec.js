@@ -112,10 +112,3 @@ test('activity dialog receives focus and restores it on exit', async ({ page }) 
   await page.getByRole('button',{name:'Exit',exact:true}).click()
   await expect(trigger).toBeFocused()
 })
-
-test('invalid progress import reports an inline accessible error', async ({ page }) => {
-  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:'Progress',exact:true}).click()
-  await page.locator('input[type="file"]').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from('{"type":"wrong"}')})
-  await expect(page.getByRole('status')).toContainText(/not a Security\+ learner export/i)
-})

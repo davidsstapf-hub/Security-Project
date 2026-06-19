@@ -785,41 +785,13 @@ function DomainsView({ progress }) {
   );
 }
 
-function ProgressView({ progress, onImport }) {
+function ProgressView({ progress }) {
   const readiness = getReadiness(progress);
   const currentTier = currentTierForProgress(
     tiers,
     progress,
     getRecommendation,
   );
-  const [importStatus, setImportStatus] = useState(null);
-  const download = () => {
-    const url = URL.createObjectURL(
-      new Blob([progressRepository.export(progress)], {
-        type: "application/json",
-      }),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `security-plus-progress-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-  const importFile = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      onImport(await file.text());
-      setImportStatus({
-        kind: "success",
-        message: "Progress imported successfully.",
-      });
-    } catch (error) {
-      setImportStatus({ kind: "error", message: error.message });
-    } finally {
-      event.target.value = "";
-    }
-  };
   return (
     <div className="page">
       <div className="page-intro">
@@ -866,35 +838,6 @@ function ProgressView({ progress, onImport }) {
           <p>
             Finish the next recommended activity to strengthen your core map.
           </p>
-        </section>
-        <section className="panel data-panel">
-          <p className="eyebrow">Learner data</p>
-          <h3>Keep your progress portable.</h3>
-          <p>
-            Export a versioned backup or restore one created by this app.
-            Imports remain on this device.
-          </p>
-          <div>
-            <button className="button button--ghost" onClick={download}>
-              Export progress
-            </button>
-            <label className="button button--ghost">
-              Import progress
-              <input
-                type="file"
-                accept="application/json,.json"
-                onChange={importFile}
-              />
-            </label>
-          </div>
-          {importStatus && (
-            <p
-              className={`import-status ${importStatus.kind === "error" ? "import-status--error" : ""}`}
-              role="status"
-            >
-              {importStatus.message}
-            </p>
-          )}
         </section>
       </div>
     </div>
@@ -1568,12 +1511,7 @@ export default function App() {
           ))}
         {active === "domains" && <DomainsView progress={progress} />}
         {active === "progress" && (
-          <ProgressView
-            progress={progress}
-            onImport={(serialized) =>
-              setProgress(progressRepository.import(serialized))
-            }
-          />
+          <ProgressView progress={progress} />
         )}
         {active === "study-guide" && <StudyGuideView />}
       </main>
