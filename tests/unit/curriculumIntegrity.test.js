@@ -12,12 +12,26 @@ test('objective verification is an explicit release gate', () => {
   if (curriculumMetadata.objectiveVersionVerified) assert.ok(curriculumMetadata.verifiedAt)
 })
 
-test('official objective coverage gaps stay visible until resolved', () => {
+test('official objective 1.3 and 4.5 learning loops are present', () => {
   const declared = allActivities.map((activity) => String(activity.objective))
-  assert.equal(declared.some((objective) => objective.includes('1.3')), false)
-  assert.equal(declared.some((objective) => objective.includes('4.5')), false)
+  assert.equal(declared.some((objective) => objective.includes('1.3')), true)
+  assert.equal(declared.some((objective) => objective.includes('4.5')), true)
   assert.equal(curriculumMetadata.objectiveVersionVerified, false)
 })
+
+for (const [moduleId, objective] of [['t1-change-management-section','1.3'], ['t4-enterprise-capabilities-section','4.5']]) {
+  test(`${objective} ships a complete supplemental learning loop`, () => {
+    const module = tiers.flatMap((tier) => tier.modules).find((candidate) => candidate.id === moduleId)
+    const [lesson, scenario, cards, check, quiz] = module.activities
+    assert.equal(lesson.content.length, 6)
+    assert.equal(scenario.type, 'scenario')
+    assert.equal(scenario.evidence.length, 3)
+    assert.equal(cards.cards.length, 14)
+    assert.equal(check.questions.length, 5)
+    assert.equal(quiz.questions.length, 10)
+    assert.ok(module.activities.every((activity) => activity.objective === objective))
+  })
+}
 
 test('traceability rows connect objectives to concrete activities', () => {
   const rows = buildTraceabilityMatrix(tiers)

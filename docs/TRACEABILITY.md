@@ -18,8 +18,8 @@ Ranges in curriculum metadata are teaching groupings, not a claim that every off
 
 ## Open findings from the official document review
 
-- **1.3 Change management:** no activity currently declares this objective. Change management appears incidentally in governance and operational material, but it needs a dedicated, assessable learning loop or an explicit substantive mapping.
-- **4.5 Enterprise capability modification:** no activity currently declares this objective. Monitoring content mentions several tools, but it does not yet teach the scenario-driven configuration changes listed by CompTIA.
+- **Resolved - 1.3 Change management:** added a complete supplemental learning loop covering ownership, stakeholders, impact, testing, approval, maintenance windows, rollback, validation, version control, and documentation.
+- **Resolved - 4.5 Enterprise capability modification:** added a complete supplemental learning loop covering firewalls, IDS/IPS, secure protocols, DNS/web/email controls, EDR/XDR, FIM, NAC, DLP, UEBA, validation, tuning, and rollback.
 - **4.7-4.9 mapping:** the combined Forensics and Automation section legitimately spans automation, forensics, and investigation concepts, but its generated lesson and assessments require editorial review to prove balanced coverage rather than relying on the range label.
 
 Publication remains blocked until these findings are resolved, every detailed bullet is traced to substantive content, and `objectiveVersionVerified` is set with a completion date.

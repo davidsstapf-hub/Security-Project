@@ -9,7 +9,7 @@ export const curriculumMetadata = {
   objectiveReviewedAt: '2026-06-18',
   objectiveVersionVerified: false,
   verifiedAt: null,
-  verificationNote: 'Official V7 objectives reviewed; publication remains blocked while objective 1.3 and 4.5 coverage gaps are resolved and detailed bullet-level traceability is completed.',
+  verificationNote: 'Official V7 objectives reviewed; objective 1.3 and 4.5 learning loops added. Publication remains blocked until detailed bullet-level traceability is completed.',
   contentSchemaVersion: 2,
 }
 

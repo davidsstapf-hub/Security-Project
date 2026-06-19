@@ -6,6 +6,7 @@ import { leastPrivilegeCards, leastPrivilegeKnowledgeCheck, leastPrivilegeReadin
 import { threatsCards, threatsKnowledgeCheck, threatsReading, threatsSectionQuiz } from './sections/commonThreats.js'
 import { cryptographyCards, cryptographyKnowledgeCheck, cryptographyReading, cryptographySectionQuiz } from './sections/cryptography.js'
 import { advancedTiers } from './advancedTiers.js'
+import { changeManagementModule, enterpriseCapabilitiesModule } from './supplementalObjectives.js'
 import { createPracticeExamTier } from './practiceExam.js'
 
 /** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'|'scenario'|'exam'} ActivityType */
@@ -172,6 +173,10 @@ const legacyTiers = [
 ]
 
 const fiveTierCurriculum = [legacyTiers[0], ...advancedTiers]
+fiveTierCurriculum[0].modules.splice(-1, 0, changeManagementModule)
+const tier4 = fiveTierCurriculum.find((tier) => tier.number === 4)
+tier4.modules.splice(tier4.modules.findIndex((module) => module.id === 't4-final-section'), 0, enterpriseCapabilitiesModule)
+for (const tier of [fiveTierCurriculum[0], tier4]) tier.minutes = tier.modules.flatMap((module) => module.activities).reduce((sum, activity) => sum + activity.duration, 0)
 export const tiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
 
 // Deterministically distribute correct answers without changing question meaning.

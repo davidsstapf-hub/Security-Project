@@ -135,9 +135,9 @@ test('activity and question identifiers remain unique', () => {
 })
 
 for (const tier of tiers.slice(1,5)) {
-  test(`Tier ${tier.number} ships six complete learning loops`, () => {
+  test(`Tier ${tier.number} ships at least six complete learning loops`, () => {
     const sections = tier.modules.filter((module) => /^t\d-[a-z-]+-section$/.test(module.id) && !module.id.includes('final') && module.activities.length === 5)
-    assert.equal(sections.length, 6)
+    assert.ok(sections.length >= 6)
     for (const section of sections) {
       const [lesson, scenario, cards, check, quiz] = section.activities
       assert.equal(lesson.type, 'lesson')
