@@ -25,6 +25,7 @@ import {
   Sparkles,
   Target,
   Trophy,
+  UsersRound,
   X,
   Zap,
 } from "lucide-react";
@@ -57,6 +58,7 @@ const navItems = [
   { id: "domains", label: "Exam domains", icon: BookOpen },
   { id: "progress", label: "Progress", icon: BarChart3 },
   { id: "study-guide", label: "How to study", icon: GraduationCap },
+  { id: "developers", label: "Meet the developers", icon: UsersRound },
 ];
 
 const typeLabels = {
@@ -1010,6 +1012,55 @@ function StudyGuideView() {
   );
 }
 
+function MeetDevelopersView() {
+  const team = ["David", "Ryan", "Russ"];
+  return (
+    <div className="page developers-page">
+      <section className="developers-hero">
+        <div>
+          <span className="status-pill">
+            <i /> Built by practitioners
+          </span>
+          <p className="eyebrow">Meet the developers</p>
+          <h2>Security+ study design shaped by real cybersecurity work.</h2>
+          <p>
+            This app was developed strategically by three cybersecurity
+            professionals with a combined 30 years of cybersecurity expertise.
+            Each developer currently holds an active Security+ certification,
+            so the learning path, assessment style, and review flow were built
+            with both exam readiness and practical security judgment in mind.
+          </p>
+        </div>
+        <div className="developers-badge" aria-hidden="true">
+          <UsersRound size={44} />
+          <strong>30+</strong>
+          <span>combined years of cybersecurity expertise</span>
+        </div>
+      </section>
+      <section className="team-section">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Meet the team</p>
+            <h3>Three certified security practitioners behind the guide.</h3>
+          </div>
+        </div>
+        <div className="team-grid">
+          {team.map((name, index) => (
+            <article key={name} className="team-card">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div className="team-card__avatar">
+                {name.slice(0, 1)}
+              </div>
+              <h4>{name}</h4>
+              <p>Cybersecurity professional · Current Security+ certified</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function LessonActivity({ activity, onComplete, completed }) {
   return (
     <>
@@ -1514,6 +1565,7 @@ export default function App() {
           <ProgressView progress={progress} />
         )}
         {active === "study-guide" && <StudyGuideView />}
+        {active === "developers" && <MeetDevelopersView />}
       </main>
       {showWelcome && (
         <Onboarding
