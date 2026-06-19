@@ -77,7 +77,7 @@ The project uses Capacitor to package the same React app for iOS. Native project
 
 ## Recommended next milestone
 
-Complete technical and editorial review against the latest official SY0-701 objectives, then validate each tier with real learners in order. Record confusing explanations, difficulty spikes, navigation friction, and mobile/accessibility findings before release.
+The authored coursework and automated content review are complete. Before release, perform final human bullet-by-bullet signoff against the official SY0-701 V7 PDF, complete manual keyboard and screen-reader journeys, and validate each tier with at least three real learners. Record confusing explanations, difficulty spikes, navigation friction, and accessibility findings before release.
 
 ## Content and ethics
 

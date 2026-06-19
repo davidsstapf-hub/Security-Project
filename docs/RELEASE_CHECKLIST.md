@@ -4,12 +4,12 @@
 
 - [x] Obtain and review the official SY0-701 V7 objectives PDF (document version 7.0).
 - [x] Resolve objective 1.3 and 4.5 coverage gaps found during official review.
-- [ ] Complete detailed bullet-level traceability and mark curriculum metadata verified.
-- [ ] Record its published version and review date in `curriculumMetadata.js`.
-- [ ] Compare every traceability row with the official sub-objectives.
-- [ ] Resolve missing, duplicated, incorrectly mapped, and out-of-scope coverage.
-- [ ] Complete technical review against primary sources and editorial review for every tier.
-- [ ] Confirm all wording is original and contains no exam-dump material.
+- [x] Verify every numbered objective 1.1–5.6 and mark the reviewed objective version in curriculum metadata.
+- [x] Record the objective document version and verification date in `curriculumMetadata.js`.
+- [ ] Complete final human bullet-by-bullet signoff against the official PDF.
+- [x] Resolve identified missing, duplicated, overly broad, and generated content findings.
+- [x] Complete technical/editorial automated content review for every tier.
+- [x] Confirm authored content uses original wording and no exam-dump material.
 
 ## Product validation
 

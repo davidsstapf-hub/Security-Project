@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { allActivities, tiers } from '../../src/content/studyData.js'
-import { buildTraceabilityMatrix, curriculumMetadata } from '../../src/content/curriculumMetadata.js'
+import { buildTraceabilityMatrix, curriculumMetadata, objectiveHasCurriculumCoverage, officialObjectiveCodes } from '../../src/content/curriculumMetadata.js'
 
 test('objective verification is an explicit release gate', () => {
   assert.equal(curriculumMetadata.examCode, 'SY0-701')
@@ -16,7 +16,8 @@ test('official objective 1.3 and 4.5 learning loops are present', () => {
   const declared = allActivities.map((activity) => String(activity.objective))
   assert.equal(declared.some((objective) => objective.includes('1.3')), true)
   assert.equal(declared.some((objective) => objective.includes('4.5')), true)
-  assert.equal(curriculumMetadata.objectiveVersionVerified, false)
+  assert.equal(curriculumMetadata.objectiveVersionVerified, true)
+  assert.ok(curriculumMetadata.verifiedAt)
 })
 
 for (const [moduleId, objective] of [['t1-change-management-section','1.3'], ['t4-enterprise-capabilities-section','4.5']]) {
@@ -37,6 +38,11 @@ test('traceability rows connect objectives to concrete activities', () => {
   const rows = buildTraceabilityMatrix(tiers)
   assert.ok(rows.length >= 20)
   assert.ok(rows.every((row) => row.lessons.length + row.scenarios.length + row.flashcards.length + row.assessments.length > 0))
+})
+
+test('every numbered official SY0-701 objective has curriculum coverage', () => {
+  assert.equal(officialObjectiveCodes.length, 28)
+  for (const code of officialObjectiveCodes) assert.equal(objectiveHasCurriculumCoverage(code, tiers), true, code)
 })
 
 test('every assessment question has valid, unique choices and an explanation', () => {

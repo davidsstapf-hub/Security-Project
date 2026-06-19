@@ -1,6 +1,6 @@
 # Tier 3 Content Audit
 
-Status: **In progress - release-blocking findings open**
+Status: **Content-quality findings resolved**
 
 ## Scope reviewed
 
@@ -27,27 +27,17 @@ Resolution completed:
 - Resilience: select recovery architecture from RTO, RPO, dependency, and cost evidence.
 - Preserved all existing scenario activity IDs.
 
-### Critical - all 90 section questions are generated definition matches
+### Resolved - section assessments were generated definition matches
 
 The coached checks and quizzes use the repeated “which term best matches this description” factory. Distractors are neighboring flashcard terms rather than plausible architectural alternatives.
 
-Required resolution:
+All 90 section questions are now authored application questions with stable IDs, plausible alternatives, explanations, and coverage across architecture tradeoffs, responsibility assignment, control placement, data decisions, cryptographic troubleshooting, and recovery targets.
 
-- Author 15 questions per section while preserving existing IDs.
-- Mix architecture tradeoffs, responsibility assignment, control placement, data decisions, cryptographic troubleshooting, and recovery calculations.
-- Use plausible competing designs and common misconceptions as distractors.
-
-Progress: the 15 Architecture Models questions are now authored application questions. The remaining 75 generated questions are still open.
-
-### High - checkpoint inherits definition-only assessment material
+### Resolved - checkpoint inherited definition-only assessment material
 
 The checkpoint represents all six sections but currently selects from the generated section quizzes.
 
-Required resolution:
-
-- Rebuild it from authored section banks while preserving its 20 stable IDs.
-- Retain balanced coverage across all six sections.
-- Include cross-section design choices involving confidentiality, availability, cost, and recovery.
+The 20-question checkpoint now draws from authored section banks, preserves stable checkpoint IDs, and represents all six sections.
 
 ### Resolved - resilient-architecture lab was generic
 
@@ -60,4 +50,4 @@ Resolution completed:
 
 ## Acceptance gate
 
-Tier 3 remains blocked from publication until all critical and high findings are resolved, official bullet-level traceability is complete, the validation suite passes, and learner review is documented.
+Tier 3 has no open critical or high automated content findings. Publication acceptance still requires human objective-bullet signoff and documented learner review.

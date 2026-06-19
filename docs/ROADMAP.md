@@ -33,13 +33,14 @@
 - [x] Tier 1 — Foundations
 - [x] Tier 2 — Systems & Threats
 - [x] Resolve Tier 2 publication findings in `docs/TIER_2_CONTENT_AUDIT.md`
-- [ ] Resolve Tier 3 publication findings in `docs/TIER_3_CONTENT_AUDIT.md`
+- [x] Resolve Tier 3 publication findings in `docs/TIER_3_CONTENT_AUDIT.md`
 - [x] Tier 3 — Secure Architecture and resilient-architecture lab
 - [x] Tier 4 — Security Operations and staged investigation
 - [x] Tier 5 — Governance, cross-domain scenario, and timed practice exam
 - [x] Tier 6 — 80-question source-grounded practice exam
-- [ ] Verify all mappings against the latest official SY0-701 objectives
-- [ ] Complete technical/editorial content review
+- [x] Verify all numbered mappings against the official SY0-701 V7 objectives
+- [ ] Complete final human bullet-by-bullet objective signoff
+- [x] Complete technical/editorial automated content review
 - [x] Add automated accessibility and responsive-layout validation
 - [x] Add versioned learner-data export/import
 - [x] Document local-data security and privacy behavior

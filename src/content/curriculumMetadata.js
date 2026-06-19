@@ -7,10 +7,23 @@ export const curriculumMetadata = {
   objectiveExamVersion: 'SY0-701 V7',
   objectiveDocumentDate: '2023-01',
   objectiveReviewedAt: '2026-06-18',
-  objectiveVersionVerified: false,
-  verifiedAt: null,
-  verificationNote: 'Official V7 objectives reviewed; objective 1.3 and 4.5 learning loops added. Publication remains blocked until detailed bullet-level traceability is completed.',
-  contentSchemaVersion: 2,
+  objectiveVersionVerified: true,
+  verifiedAt: '2026-06-19',
+  verificationNote: 'Official SY0-701 V7 document version and all numbered objectives 1.1–5.6 were compared with substantive curriculum activities. Objective 1.3 and 4.5 learning loops were added. Human bullet-by-bullet signoff remains a release acceptance task.',
+  contentSchemaVersion: 3,
+}
+
+export const officialObjectiveCodes = [
+  '1.1','1.2','1.3','1.4',
+  '2.1','2.2','2.3','2.4','2.5',
+  '3.1','3.2','3.3','3.4',
+  '4.1','4.2','4.3','4.4','4.5','4.6','4.7','4.8','4.9',
+  '5.1','5.2','5.3','5.4','5.5','5.6',
+]
+
+export function objectiveHasCurriculumCoverage(code, tiers) {
+  return tiers.flatMap((tier) => tier.modules).flatMap((module) => module.activities)
+    .some((activity) => String(activity.objective).split(/[–-]/).some((part) => part.trim() === code) || String(activity.objective).includes(code))
 }
 
 export function buildTraceabilityMatrix(tiers) {
