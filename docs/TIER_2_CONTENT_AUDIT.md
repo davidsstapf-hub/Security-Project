@@ -25,15 +25,17 @@ Required resolution:
 - Tie distractors to realistic misconceptions rather than neighboring vocabulary.
 - Preserve existing question IDs to protect learner progress.
 
-### Critical — scenarios reuse one generic template
+Progress: the 15 Network Attack Surfaces questions have been replaced with authored application questions. The remaining 75 generated questions are still open.
 
-All six scenarios inherit the same evidence pattern, action structure, hints, and debrief from `genericScenario()`. The topic labels change, but the learner decision does not materially change.
+### Resolved — scenarios reuse one generic template
 
-Required resolution:
+The original six scenarios inherited the same generic evidence and decision pattern. They now use distinct network exposure, actively exploited appliance, ransomware, payment fraud, token theft, and configuration-drift cases with topic-specific actions and debriefs. A regression test verifies that evidence and decision sets remain distinct.
 
-- Author distinct evidence and decisions for each Tier 2 topic.
-- Include topic-appropriate artifacts such as network observations, configuration context, identity events, malware indicators, and verification records.
-- Preserve existing scenario activity IDs.
+Resolution completed:
+
+- Authored distinct evidence and decisions for each Tier 2 topic.
+- Added topic-appropriate network, configuration, identity, malware, and verification evidence.
+- Preserved all existing scenario activity IDs.
 
 ### High — checkpoint inherits definition-only questions
 
@@ -61,4 +63,4 @@ Each lesson contains six topic-specific segments and generally useful distinctio
 
 ## Acceptance gate
 
-Tier 2 remains blocked from publication until the two critical and two high findings are resolved, the full validation suite passes, and the objective mapping is verified against the official document.
+Tier 2 remains blocked from publication until the assessment critical finding and two high findings are resolved, the full validation suite passes, and the objective mapping is verified against the official document.

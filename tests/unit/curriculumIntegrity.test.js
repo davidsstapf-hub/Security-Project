@@ -61,3 +61,26 @@ test('Tier 6 distractors are substantive and answer positions remain balanced', 
   const counts = [0,1,2,3].map((position) => exam.questions.filter((question) => question.correctIndex === position).length)
   assert.ok(Math.max(...counts)-Math.min(...counts) <= 8,JSON.stringify(counts))
 })
+
+test('Tier 2 scenarios use distinct evidence and decisions', () => {
+  const scenarios = tiers.find((tier) => tier.number === 2).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.type === 'scenario')
+  assert.equal(scenarios.length, 6)
+  assert.equal(new Set(scenarios.map((scenario) => scenario.evidence.join('|'))).size, 6)
+  assert.equal(new Set(scenarios.map((scenario) => scenario.actions.map((action) => action.label).join('|'))).size, 6)
+  for (const scenario of scenarios) {
+    assert.equal(scenario.evidence.length, 3, scenario.id)
+    assert.equal(scenario.actions.filter((action) => action.correct).length, 3, scenario.id)
+    assert.ok(scenario.explanation.length >= 120, scenario.id)
+  }
+})
+
+test('Tier 2 network assessments use authored application questions', () => {
+  const questions = allActivities
+    .filter((activity) => activity.id === 't2-network-check' || activity.id === 't2-network-quiz')
+    .flatMap((activity) => activity.questions)
+  assert.equal(questions.length, 15)
+  assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')))
+  assert.ok(questions.every((question) => question.prompt.length >= 90))
+})
