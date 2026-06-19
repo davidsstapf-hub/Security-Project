@@ -127,13 +127,14 @@ test('Tier 2 checkpoint is built entirely from authored application questions', 
   assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
-test('Tier 3 generated assessment debt remains measurable until rewritten', () => {
+test('Tier 3 section assessments contain no generated definition-match questions', () => {
   const assessments = tiers.find((tier) => tier.number === 3).modules
     .flatMap((module) => module.activities)
     .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
   const questions = assessments.flatMap((activity) => activity.questions)
   assert.equal(questions.length, 90)
-  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 0)
+  assert.equal(new Set(questions.map((question) => question.prompt)).size, 90)
 })
 
 test('Tier 3 architecture-model assessments use authored application questions', () => {
@@ -154,6 +155,24 @@ test('Tier 3 responsibility and network-design assessments use authored applicat
     assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
     assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
   }
+})
+
+test('Tier 3 data, applied-crypto, and resilience assessments use authored application questions', () => {
+  for (const section of ['data', 'applied-crypto', 'resilience']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t3-${section}-check` || activity.id === `t3-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
+})
+
+test('Tier 3 checkpoint uses authored questions from all six sections', () => {
+  const checkpoint = allActivities.find((activity) => activity.id === 't3-checkpoint')
+  assert.equal(checkpoint.questions.length, 20)
+  assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
+  assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
 test('Tier 3 scenarios use distinct architecture evidence and decisions', () => {
