@@ -133,7 +133,7 @@ test('Tier 3 generated assessment debt remains measurable until rewritten', () =
     .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
   const questions = assessments.flatMap((activity) => activity.questions)
   assert.equal(questions.length, 90)
-  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 75)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
 })
 
 test('Tier 3 architecture-model assessments use authored application questions', () => {
@@ -143,6 +143,17 @@ test('Tier 3 architecture-model assessments use authored application questions',
   assert.equal(questions.length, 15)
   assert.equal(new Set(questions.map((question) => question.prompt)).size, 15)
   assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')))
+})
+
+test('Tier 3 responsibility and network-design assessments use authored application questions', () => {
+  for (const section of ['responsibility', 'network-design']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t3-${section}-check` || activity.id === `t3-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
 })
 
 test('Tier 3 scenarios use distinct architecture evidence and decisions', () => {
