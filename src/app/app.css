@@ -293,3 +293,23 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--green); out
 button:disabled { cursor:not-allowed; opacity:.5; }.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 @media(max-width:920px){.search-toggle{display:grid}.topbar__actions.search-open .search{position:absolute;left:14px;right:14px;top:calc(100% + 8px);z-index:20;display:flex;width:auto;background:#071116;box-shadow:0 15px 35px rgba(0,0,0,.45)}.topbar__actions.search-open .search input{width:100%}.search-intro>.button{width:100%}}
 .scenario-brief{padding:22px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.scenario-brief>p:not(.eyebrow),.scenario-hints p{color:var(--muted);font-size:11px;line-height:1.7}.scenario-evidence{margin-top:9px;padding:12px;border-left:3px solid var(--green);background:rgba(0,217,255,.05);color:#bdd0d7;font-size:11px}.scenario-hints{margin-top:16px;color:var(--muted);font-size:11px}.scenario-hints summary{cursor:pointer;color:var(--green)}.answer--selected{border-color:var(--green);background:rgba(0,217,255,.08)}.answer--selected>span{color:#031019;background:var(--green)}.exam-status,.exam-nav{display:flex;justify-content:space-between;align-items:center;gap:12px}.exam-status{position:sticky;top:76px;z-index:3;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:rgba(5,10,13,.96)}.exam-status strong{color:var(--green);font:600 18px 'DM Mono',monospace}.exam-status span{color:var(--muted);font-size:10px}.exam-nav{margin-top:24px}@media(max-width:560px){.exam-status{top:64px}.exam-nav{display:grid;grid-template-columns:1fr 1fr}.exam-nav .button{min-height:48px}}
+
+/* Readable small-text scale */
+.nav__item { font-size:14px; }
+.search input { font-size:13px; }
+.button { font-size:12px; }
+.sidebar__mission strong,.profile strong,.path-summary span strong { font-size:13px; }
+.sidebar__mission>span,.profile span,.hero__copy>p:not(.eyebrow),.page-intro p:not(.eyebrow),.tier-banner>div>p:not(.eyebrow) { font-size:12px; }
+.eyebrow,.status-pill,.nav__badge,.text-button,.back-button,.trend-up,.quiz-head span,.activity-header__type,.lesson-objective span,.activity-status,.tier-bars span b,.tier-bars>div>strong,.domain-row__progress,.domain-card small,.domain-card__bottom strong,.topic-chips b,.practice-feature>div span,.exam-mode-picker button b,.search-tier>header span,.search-module button span { font-size:11px; }
+.stats-row p,.stats-row small,.domain-row__name small,.weight-key,.domain-card p,.topic-chips span,.tier-node__copy em,.path-summary span small,.guidance-note span,.activity-copy small,.activity-time,.preview-badge,.quiz-footer>span,.results-score span,.welcome-card>small,.welcome-tiers span,.flashcard span,.flashcard small,.completion-toast small,.lesson-media figcaption,.resources-disclosure { font-size:11px; }
+.domain-row__name strong,.challenge-card>p:not(.eyebrow),.domain-detail p:not(.eyebrow),.practice-feature p,.practice-option p:not(.eyebrow),.mastery-panel>p:not(.eyebrow),.guidance-note strong,.module-heading p:not(.eyebrow),.activity-copy em,.learning-objectives span,.key-idea strong,.key-idea p,.explanation strong,.explanation p,.reassurance-card>p:not(.eyebrow),.study-method-grid article>p:not(.eyebrow),.study-rhythm li span,.study-disclaimer p,.additional-resources>div>p:not(.eyebrow),.import-status,.exam-status span,.search-module button small { font-size:12px; }
+.activity-copy strong,.path-summary span strong,.data-panel>p:not(.eyebrow),.exam-mode-picker>p:not(.eyebrow),.exam-mode-picker button span,.scenario-brief>p:not(.eyebrow),.scenario-hints p,.scenario-evidence,.scenario-hints,.activity-instruction,.inline-check button,.lesson-body .inline-check__explanation { font-size:13px; }
+.answer { font-size:13px; line-height:1.45; }
+.lesson-body section p { font-size:14px; }
+
+@media(max-width:560px){
+  .nav__item { font-size:14px; }
+  .activity-copy strong { font-size:13px; }
+  .activity-copy em { font-size:12px; }
+  .answer { font-size:13px; }
+}
