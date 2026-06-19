@@ -71,6 +71,8 @@ Then open `http://127.0.0.1:5173`.
 
 Run unit and curriculum-integrity checks with `npm test`, browser accessibility and responsive checks with `npm run test:e2e`, or the complete release suite with `npm run validate`.
 
+For the private Tiers 1–2 review build, run `npm run dev:beta`. Validate its release boundary with `npm run test:beta`.
+
 ## iOS direction
 
 The project uses Capacitor to package the same React app for iOS. Native project generation and simulator validation require macOS with Xcode. On that machine, run `npx cap add ios`, followed by `npm run ios:sync` and `npm run ios:open`.

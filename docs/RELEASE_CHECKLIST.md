@@ -21,4 +21,13 @@
 
 ## Learner acceptance
 
+## Private beta technical gate
+
+- [x] Limit the review build to Tiers 1–2 without deleting hidden-tier progress.
+- [x] Add private-beta scope, readiness, privacy, and independence messaging.
+- [x] Add desktop/mobile tests for visibility, search boundaries, privacy, and accessibility.
+- [x] Make GitHub Pages manual-only and prevent Netlify builds from the review branch.
+- [ ] Visually approve the local beta build.
+- [ ] Complete three learner sessions for Tier 1 and three for Tier 2.
+
 For each tier, recruit at least three learners and record device, completion outcome, confusing content, difficulty jumps, navigation friction, and accessibility problems in `docs/VALIDATION_LOG.md`. Critical and high findings block progression to the next tier.

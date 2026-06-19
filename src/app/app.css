@@ -313,3 +313,13 @@ button:disabled { cursor:not-allowed; opacity:.5; }.sr-only { position:absolute;
   .activity-copy em { font-size:12px; }
   .answer { font-size:13px; }
 }
+
+.beta-banner { margin:0 28px 18px; min-height:48px; padding:10px 14px; display:flex; align-items:center; gap:10px; border:1px solid rgba(255,184,107,.35); border-radius:11px; color:#ffd0a0; background:rgba(255,184,107,.07); }
+.beta-banner strong { font-size:12px; }
+.beta-banner span { color:#aebfba; font-size:12px; }
+.beta-banner svg { flex:0 0 auto; }
+.beta-privacy { margin:28px; padding:20px 0 8px; display:grid; gap:6px; border-top:1px solid var(--line); color:var(--muted); }
+.beta-privacy strong { color:#dceae5; font-size:12px; }
+.beta-privacy span { max-width:900px; font-size:12px; line-height:1.65; }
+.beta-privacy small { font-size:11px; }
+@media(max-width:700px){.beta-banner{margin:0 16px 14px;align-items:flex-start;flex-wrap:wrap}.beta-banner span{flex-basis:100%;padding-left:26px}.beta-privacy{margin:24px 16px}}

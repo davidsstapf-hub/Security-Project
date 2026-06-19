@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:beta": "vite --mode beta",
     "build": "vite build",
+    "build:beta": "vite build --mode beta",
     "preview": "vite preview",
     "test": "node --test tests/unit/*.test.js",
     "test:e2e": "playwright test",
+    "test:beta": "playwright test --config playwright.beta.config.js",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.js",
     "validate": "npm test && npm run build && npm run test:e2e",
     "ios:sync": "npm run build && cap sync ios",

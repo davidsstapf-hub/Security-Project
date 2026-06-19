@@ -7,6 +7,7 @@ import { threatsCards, threatsKnowledgeCheck, threatsReading, threatsSectionQuiz
 import { cryptographyCards, cryptographyKnowledgeCheck, cryptographyReading, cryptographySectionQuiz } from './sections/cryptography.js'
 import { advancedTiers } from './advancedTiers.js'
 import { changeManagementModule, enterpriseCapabilitiesModule } from './supplementalObjectives.js'
+import { visibleTiersForRelease } from '../config/release.js'
 import { createPracticeExamTier } from './practiceExam.js'
 
 /** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'|'scenario'|'exam'} ActivityType */
@@ -177,11 +178,12 @@ fiveTierCurriculum[0].modules.splice(-1, 0, changeManagementModule)
 const tier4 = fiveTierCurriculum.find((tier) => tier.number === 4)
 tier4.modules.splice(tier4.modules.findIndex((module) => module.id === 't4-final-section'), 0, enterpriseCapabilitiesModule)
 for (const tier of [fiveTierCurriculum[0], tier4]) tier.minutes = tier.modules.flatMap((module) => module.activities).reduce((sum, activity) => sum + activity.duration, 0)
-export const tiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
+export const fullTiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
+export const tiers = visibleTiersForRelease(fullTiers)
 
 // Deterministically distribute correct answers without changing question meaning.
 // The stable question id controls rotation so updates do not reshuffle saved content.
-for (const tier of tiers) for (const module of tier.modules) for (const activity of module.activities) for (const question of activity.questions ?? []) {
+for (const tier of fullTiers) for (const module of tier.modules) for (const activity of module.activities) for (const question of activity.questions ?? []) {
   if (question.lockedAnswerPosition) continue
   const rotation = [...question.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % question.options.length
   if (rotation) {
@@ -191,6 +193,7 @@ for (const tier of tiers) for (const module of tier.modules) for (const activity
 }
 
 export const allActivities = tiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id }))))
+export const allCurriculumActivities = fullTiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id }))))
 
 export function getActivity(activityId) {
   return allActivities.find((activity) => activity.id === activityId)

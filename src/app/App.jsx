@@ -45,6 +45,7 @@ import {
   moduleNeedsReview,
 } from "../lib/learningLogic.js";
 import { progressRepository } from "../lib/progressRepository.js";
+import { isPrivateBeta } from "../config/release.js";
 import {
   currentTierForProgress,
   filterCurriculum,
@@ -121,7 +122,7 @@ function Sidebar({ active, onNavigate, open, onClose, progress }) {
         </div>
         <p className="eyebrow">Learning path</p>
         <strong>Foundations first.</strong>
-        <span>Six guided tiers turn a big exam into the next small win.</span>
+        <span>{isPrivateBeta ? `${tiers.length} reviewed beta tiers build your core skills.` : `${tiers.length} guided tiers turn a big exam into the next small win.`}</span>
         <div className="mission__meter">
           <i style={{ width: `${overall}%` }} />
         </div>
@@ -266,8 +267,10 @@ function Onboarding({ onStart, onExplore }) {
           <em>We built you a trail.</em>
         </h1>
         <p>
-          Six guided tiers move from essential language to a full practice exam.
-          Nothing is locked, and you’ll always know the next useful step.
+          {isPrivateBeta
+            ? `This private beta includes ${tiers.length} reviewed tiers covering foundations, systems, and threats.`
+            : `${tiers.length} guided tiers move from essential language to a full practice exam.`}
+          {" "}You’ll always know the next useful step.
         </p>
         <div className="welcome-tiers">
           {tiers.map((tier) => (
@@ -283,7 +286,7 @@ function Onboarding({ onStart, onExplore }) {
             Start with Tier 1 <ArrowRight size={17} />
           </button>
           <button className="button button--ghost" onClick={onExplore}>
-            Explore the full path
+            Explore the {isPrivateBeta ? "beta" : "full"} path
           </button>
         </div>
         <small>Progress stays on this device. No account required.</small>
@@ -305,6 +308,9 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
     getRecommendation,
   );
   const currentTierProgress = getTierProgress(currentTier, progress);
+  const completedReleasedActivities = progress.completedActivityIds.filter((id) =>
+    allActivities.some((activity) => activity.id === id),
+  ).length;
   return (
     <div className="page dashboard">
       <div className="circuit-field" aria-hidden="true">
@@ -370,7 +376,7 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
             <span>TIER {currentTier.number} PROGRESS</span>
           </div>
           <div className="signal signal--one">
-            <Activity size={14} /> {readiness}% exam ready
+            <Activity size={14} /> {readiness}% {isPrivateBeta ? "beta readiness" : "exam ready"}
           </div>
           <div className="signal signal--two">
             <LockKeyhole size={14} /> Path stays open
@@ -404,7 +410,7 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           </span>
           <div>
             <p>Activities</p>
-            <strong>{progress.completedActivityIds.length}</strong>
+            <strong>{completedReleasedActivities}</strong>
             <small>completed across the path</small>
           </div>
         </article>
@@ -424,7 +430,7 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           <div className="section-heading">
             <div>
               <p className="eyebrow">Your guided journey</p>
-              <h3>Six tiers, one clear direction</h3>
+              <h3>{tiers.length} {isPrivateBeta ? "reviewed beta tiers" : "tiers"}, one clear direction</h3>
             </div>
             <button className="text-button" onClick={() => onNavigate("path")}>
               Full path <ArrowRight size={15} />
@@ -701,7 +707,10 @@ function TierDetail({ tier, progress, onBack, onOpenActivity }) {
 }
 
 function DomainsView({ progress }) {
-  const coverage = getDomainCoverage(progress);
+  const releasedDomainIds = new Set(allActivities.map((activity) => activity.domain));
+  const coverage = getDomainCoverage(progress).filter((domain) =>
+    !isPrivateBeta || releasedDomainIds.has(domain.id),
+  );
   const [selected, setSelected] = useState(coverage[0]);
   useEffect(
     () =>
@@ -716,13 +725,14 @@ function DomainsView({ progress }) {
         <div>
           <p className="eyebrow">Objective reference</p>
           <h2>
-            Five exam domains.
+            {isPrivateBeta ? `${coverage.length} domains in this beta.` : "Five exam domains."}
             <br />
             Woven through every tier.
           </h2>
           <p>
-            Use this view to inspect official coverage. Your learning order is
-            guided by difficulty, not the domain numbering.
+            {isPrivateBeta
+              ? "This view reflects only objectives taught in the released beta tiers."
+              : "Use this view to inspect official coverage. Your learning order is guided by difficulty, not the domain numbering."}
           </p>
         </div>
       </div>
@@ -1451,6 +1461,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const openActivity = (id) => {
+    if (!getActivity(id)) return;
     activityTriggerRef.current = document.activeElement;
     setSearchQuery("");
     setActivityId(id);
@@ -1534,6 +1545,13 @@ export default function App() {
           onQueryChange={setSearchQuery}
           onSearchActivate={activateSearch}
         />
+        {isPrivateBeta && (
+          <aside className="beta-banner" role="status">
+            <ShieldCheck size={16} />
+            <strong>Private beta · Tiers 1–2</strong>
+            <span>Readiness and recommendations reflect released beta content only.</span>
+          </aside>
+        )}
         {active === "dashboard" && (
           <Dashboard
             progress={progress}
@@ -1572,6 +1590,13 @@ export default function App() {
           />
         )}
         {active === "study-guide" && <StudyGuideView />}
+        {isPrivateBeta && (
+          <footer className="beta-privacy">
+            <strong>Private beta privacy</strong>
+            <span>Progress stays in this browser unless you export it. Exports contain your name, activity history, scores, study time, and timestamps. No account, analytics, advertising, or learner-data transmission is used.</span>
+            <small>Independent study aid; not affiliated with or endorsed by CompTIA.</small>
+          </footer>
+        )}
       </main>
       {showWelcome && (
         <Onboarding
