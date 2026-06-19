@@ -108,3 +108,21 @@ test('Tier 2 network assessments use authored application questions', () => {
   assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')))
   assert.ok(questions.every((question) => question.prompt.length >= 90))
 })
+
+test('all Tier 2 section assessments use authored questions', () => {
+  const assessments = tiers.find((tier) => tier.number === 2).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
+  const questions = assessments.flatMap((activity) => activity.questions)
+  assert.equal(assessments.length, 12)
+  assert.equal(questions.length, 90)
+  assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')))
+  assert.equal(new Set(questions.map((question) => question.prompt)).size, 90)
+})
+
+test('Tier 2 checkpoint is built entirely from authored application questions', () => {
+  const checkpoint = allActivities.find((activity) => activity.id === 't2-checkpoint')
+  assert.equal(checkpoint.questions.length, 20)
+  assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
+  assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
+})

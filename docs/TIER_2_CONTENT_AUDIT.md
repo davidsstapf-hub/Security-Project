@@ -14,18 +14,16 @@ Status: **In progress — release-blocking findings open**
 
 ## Findings
 
-### Critical — assessments are mechanically generated
+### Resolved — assessments were mechanically generated
 
-`makeQuestions()` builds every coached-check and section-quiz item from the same definition-matching sentence. Distractors are simply the next three terms in the section's term list. This produces valid data, but it does not provide the recall, application, and scenario variety required for publication.
+All 90 coached-check and section-quiz questions now use authored prompts, plausible misconception-based distractors, and topic-specific explanations. Integrity tests reject the former definition-template wording and require 90 unique Tier 2 prompts.
 
-Required resolution:
+Resolution completed:
 
-- Replace all 90 generated Tier 2 questions with authored questions.
-- Mix recognition, attack-path analysis, indicator interpretation, and control selection.
-- Tie distractors to realistic misconceptions rather than neighboring vocabulary.
-- Preserve existing question IDs to protect learner progress.
-
-Progress: the 15 Network Attack Surfaces questions have been replaced with authored application questions. The remaining 75 generated questions are still open.
+- Replaced all 90 generated Tier 2 questions with authored questions.
+- Mixed recognition, attack-path analysis, indicator interpretation, and control selection.
+- Replaced neighboring-vocabulary distractors with plausible errors and competing controls.
+- Preserved existing question IDs through the section question builder.
 
 ### Resolved — scenarios reuse one generic template
 
@@ -37,15 +35,15 @@ Resolution completed:
 - Added topic-appropriate network, configuration, identity, malware, and verification evidence.
 - Preserved all existing scenario activity IDs.
 
-### High — checkpoint inherits definition-only questions
+### Resolved — checkpoint inherited definition-only questions
 
-The checkpoint covers every section numerically, but it selects questions from the generated section quizzes. Coverage breadth is present; assessment depth is not.
+The checkpoint still covers all six sections with 20 stable checkpoint IDs, but its source banks are now fully authored application assessments. Regression tests verify section coverage and prevent definition-template questions.
 
-Required resolution:
+Resolution completed:
 
-- Rebuild the checkpoint after the section-question rewrite.
-- Keep representation across all six sections.
-- Include several cross-section attack-path and mitigation questions.
+- Rebuilt the checkpoint from the completed authored section banks.
+- Preserved representation across all six sections and stable checkpoint IDs.
+- Included attack-path, indicator, verification, containment, and mitigation decisions.
 
 ### High — official objective verification is still pending
 
@@ -63,4 +61,4 @@ Each lesson contains six topic-specific segments and generally useful distinctio
 
 ## Acceptance gate
 
-Tier 2 remains blocked from publication until the assessment critical finding and two high findings are resolved, the full validation suite passes, and the objective mapping is verified against the official document.
+Tier 2 content-quality blockers are resolved. Publication still depends on detailed official-objective traceability, full validation, and learner review.
