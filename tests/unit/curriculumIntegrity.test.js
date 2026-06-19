@@ -280,13 +280,32 @@ test('Tier 5 core lessons and scenarios are substantive and distinct', () => {
   }
 })
 
-test('Tier 5 authored assessment debt is reduced to the final three sections', () => {
+test('Tier 5 section assessments contain no generated definition-match questions', () => {
   const assessments = tiers.find((tier) => tier.number === 5).modules
     .flatMap((module) => module.activities)
     .filter((activity) => activity.id.endsWith('-check') || activity.id.endsWith('-quiz'))
   const questions = assessments.flatMap((activity) => activity.questions)
   assert.equal(questions.length, 90)
-  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 0)
+  assert.equal(new Set(questions.map((question) => question.prompt)).size, 90)
+})
+
+test('Tier 5 compliance, awareness, and resilience assessments use authored application questions', () => {
+  for (const section of ['compliance', 'awareness', 'resilience-program']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t5-${section}-check` || activity.id === `t5-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
+})
+
+test('Tier 5 checkpoint uses authored questions from all six sections', () => {
+  const checkpoint = allActivities.find((activity) => activity.id === 't5-checkpoint')
+  assert.equal(checkpoint.questions.length, 20)
+  assert.equal(new Set(checkpoint.questions.map((question) => question.sectionId)).size, 6)
+  assert.ok(checkpoint.questions.every((question) => !question.prompt.includes('which term best matches this description')))
 })
 
 test('Tier 5 governance, risk, and third-party assessments use authored application questions', () => {
