@@ -58,7 +58,7 @@ Security+Project/
 
 ## Current status
 
-The complete five-tier guided curriculum is implemented with React and Vite. Every tier contains six learning sections, scenario practice, flashcards, coached knowledge checks, section quizzes, and a 20-question cumulative checkpoint. Tiers 3 and 4 add applied architecture and investigation labs; Tier 5 adds a cross-domain scenario and configurable timed practice exam. Review-aware recommendations, versioned device-local progress, domain scoring, mobile-safe layouts, and Capacitor configuration are included.
+The guided curriculum now spans six tiers. Tiers 1–5 provide complete learning loops, applied labs, and cumulative checkpoints; Tier 6 adds an 80-question, domain-weighted practice exam grounded in primary NIST, CISA, OWASP, and IETF references. Review-aware recommendations, versioned device-local progress, domain scoring, mobile-safe layouts, and Capacitor configuration are included.
 
 ## Run locally
 

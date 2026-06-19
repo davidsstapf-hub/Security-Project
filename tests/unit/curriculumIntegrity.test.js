@@ -39,3 +39,25 @@ test('question prompts remain unique within each assessment and ids remain globa
     assert.equal(new Set(normalized).size, normalized.length, activity.id)
   }
 })
+
+test('Tier 6 contains 80 source-grounded multiple-choice questions with weighted domains', () => {
+  const exam = allActivities.find((activity) => activity.id === 't6-practice-exam')
+  assert.equal(exam.type, 'exam')
+  assert.equal(exam.questions.length, 80)
+  assert.equal(exam.config.allowModeSelection,true)
+  assert.deepEqual(Object.fromEntries([1,2,3,4,5].map((domain) => [domain,exam.questions.filter((question) => question.domain === domain).length])), {1:10,2:18,3:14,4:22,5:16})
+  assert.ok(exam.questions.every((question) => question.source?.title && /^https:\/\//.test(question.source.url)))
+})
+
+test('Tier 6 distractors are substantive and answer positions remain balanced', () => {
+  const exam = allActivities.find((activity) => activity.id === 't6-practice-exam')
+  for (const question of exam.questions) {
+    assert.equal(question.options.length,4,question.id)
+    assert.equal(new Set(question.options.map((option) => option.toLowerCase())).size,4,question.id)
+    assert.ok(question.options.every((option) => option.trim().length >= 3),question.id)
+    const lengths = question.options.map((option) => option.length).sort((a,b) => a-b)
+    assert.ok(lengths[3] <= Math.max(24,lengths[1]*3),`${question.id} has an obvious length outlier`)
+  }
+  const counts = [0,1,2,3].map((position) => exam.questions.filter((question) => question.correctIndex === position).length)
+  assert.ok(Math.max(...counts)-Math.min(...counts) <= 8,JSON.stringify(counts))
+})

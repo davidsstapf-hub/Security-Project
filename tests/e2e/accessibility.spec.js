@@ -11,6 +11,20 @@ test('main navigation has no serious accessibility violations', async ({ page })
   expect(results.violations.filter((violation) => ['critical','serious'].includes(violation.impact))).toEqual([])
 })
 
+test('dashboard circuitry stays behind the guided journey', async ({ page }) => {
+  const circuit = page.locator('.circuit-field')
+  const target = page.locator('.guided-layout')
+  await expect(target).toBeVisible()
+  const layers = await page.evaluate(() => {
+    const circuitStyle=getComputedStyle(document.querySelector('.circuit-field'))
+    const targetStyle=getComputedStyle(document.querySelector('.guided-layout'))
+    return {circuit:Number(circuitStyle.zIndex),target:Number.isNaN(Number(targetStyle.zIndex))?1:Number(targetStyle.zIndex),circuitOpacity:Number(circuitStyle.opacity)}
+  })
+  expect(layers.circuit).toBeLessThan(layers.target)
+  expect(layers.circuitOpacity).toBeLessThanOrEqual(.35)
+  await expect(circuit).toBeAttached()
+})
+
 test('guided path remains usable at each viewport', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
@@ -38,4 +52,70 @@ test('sidebar shield returns to Overview home', async ({ page }) => {
   if (await menu.isVisible()) await menu.click()
   await page.getByRole('button',{name:/return to overview home/i}).click()
   await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible()
+})
+
+test('Tier 6 launches the 80-question practice exam', async ({ page }) => {
+  const menu = page.getByRole('button',{name:/open navigation/i})
+  if (await menu.isVisible()) await menu.click()
+  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.locator('.tier-node').last().click()
+  await expect(page.getByRole('heading',{name:'Practice Exam',exact:true})).toBeVisible()
+  await page.locator('.activity-row').first().click()
+  await expect(page.getByRole('heading',{name:/how do you want to train/i})).toBeVisible()
+  await page.getByRole('button',{name:/exam mode/i}).click()
+  await expect(page.getByText(/Question 1 of 80/i)).toBeVisible()
+  await page.locator('.answer').first().click()
+  await expect(page.getByRole('button',{name:/show answer/i})).toHaveCount(0)
+  await expect(page.locator('.explanation')).toHaveCount(0)
+})
+
+test('Tier 6 Practice Mode reveals answers before continuing', async ({ page }) => {
+  const menu = page.getByRole('button',{name:/open navigation/i})
+  if (await menu.isVisible()) await menu.click()
+  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.locator('.tier-node').last().click()
+  await page.locator('.activity-row').first().click()
+  await page.getByRole('button',{name:/practice mode/i}).click()
+  await page.locator('.answer').first().click()
+  await page.getByRole('button',{name:/show answer/i}).click()
+  await expect(page.locator('.explanation')).toBeVisible()
+  await expect(page.getByRole('button',{name:/next/i})).toBeEnabled()
+})
+
+test('keyboard curriculum filter finds and clears results', async ({ page }) => {
+  await page.keyboard.press('Control+K')
+  const search=page.getByRole('textbox',{name:/filter guided curriculum/i})
+  await expect(search).toBeFocused()
+  await search.fill('malware')
+  await expect(page.getByText(/activities found across/i)).toBeVisible()
+  await expect(page.locator('.search-results')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('heading',{name:/see the whole mountain/i})).toBeVisible()
+})
+
+test('curriculum filter provides recoverable empty state', async ({ page }) => {
+  await page.keyboard.press('Control+K')
+  await page.getByRole('textbox',{name:/filter guided curriculum/i}).fill('no-such-topic-xyz')
+  await expect(page.getByRole('heading',{name:/no curriculum matches/i})).toBeVisible()
+  await page.getByRole('button',{name:/show full path/i}).click()
+  await expect(page.getByRole('heading',{name:/see the whole mountain/i})).toBeVisible()
+})
+
+test('activity dialog receives focus and restores it on exit', async ({ page }) => {
+  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.locator('.tier-node').first().click()
+  const trigger=page.locator('.activity-row').first()
+  await trigger.click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.getByRole('button',{name:'Exit',exact:true})).toBeFocused()
+  await page.getByRole('button',{name:'Exit',exact:true}).click()
+  await expect(trigger).toBeFocused()
+})
+
+test('invalid progress import reports an inline accessible error', async ({ page }) => {
+  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:'Progress',exact:true}).click()
+  await page.locator('input[type="file"]').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from('{"type":"wrong"}')})
+  await expect(page.getByRole('status')).toContainText(/not a Security\+ learner export/i)
 })

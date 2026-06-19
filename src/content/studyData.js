@@ -6,6 +6,7 @@ import { leastPrivilegeCards, leastPrivilegeKnowledgeCheck, leastPrivilegeReadin
 import { threatsCards, threatsKnowledgeCheck, threatsReading, threatsSectionQuiz } from './sections/commonThreats.js'
 import { cryptographyCards, cryptographyKnowledgeCheck, cryptographyReading, cryptographySectionQuiz } from './sections/cryptography.js'
 import { advancedTiers } from './advancedTiers.js'
+import { createPracticeExamTier } from './practiceExam.js'
 
 /** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'|'scenario'|'exam'} ActivityType */
 /** @typedef {'foundation'|'developing'|'applied'|'advanced'|'synthesis'} Difficulty */
@@ -170,11 +171,13 @@ const legacyTiers = [
   },
 ]
 
-export const tiers = [legacyTiers[0], ...advancedTiers]
+const fiveTierCurriculum = [legacyTiers[0], ...advancedTiers]
+export const tiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
 
 // Deterministically distribute correct answers without changing question meaning.
 // The stable question id controls rotation so updates do not reshuffle saved content.
 for (const tier of tiers) for (const module of tier.modules) for (const activity of module.activities) for (const question of activity.questions ?? []) {
+  if (question.lockedAnswerPosition) continue
   const rotation = [...question.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % question.options.length
   if (rotation) {
     question.options = [...question.options.slice(rotation), ...question.options.slice(0, rotation)]
