@@ -205,3 +205,23 @@ test('Tier 4 scenarios use distinct operational evidence and decisions', () => {
     assert.ok(scenario.explanation.length >= 180, scenario.id)
   }
 })
+
+test('Tier 4 authored assessment debt is reduced to the final three core sections', () => {
+  const assessments = tiers.find((tier) => tier.number === 4).modules
+    .flatMap((module) => module.activities)
+    .filter((activity) => /^t4-(assets|vulnerability-management|iam-operations|monitoring|incident-response|forensics)-(check|quiz)$/.test(activity.id))
+  const questions = assessments.flatMap((activity) => activity.questions)
+  assert.equal(questions.length, 90)
+  assert.equal(questions.filter((question) => question.prompt.includes('which term best matches this description')).length, 45)
+})
+
+test('Tier 4 asset, vulnerability, and IAM assessments use authored application questions', () => {
+  for (const section of ['assets', 'vulnerability-management', 'iam-operations']) {
+    const questions = allActivities
+      .filter((activity) => activity.id === `t4-${section}-check` || activity.id === `t4-${section}-quiz`)
+      .flatMap((activity) => activity.questions)
+    assert.equal(questions.length, 15, section)
+    assert.equal(new Set(questions.map((question) => question.prompt)).size, 15, section)
+    assert.ok(questions.every((question) => !question.prompt.includes('which term best matches this description')), section)
+  }
+})

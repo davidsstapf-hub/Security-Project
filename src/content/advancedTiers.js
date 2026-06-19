@@ -1,6 +1,7 @@
 import { tier3ArchitectureLab, tier3Scenarios } from "./tier3Scenarios.js";
 import { tier3QuestionBanks } from "./tier3QuestionBanks.js";
 import { tier4InvestigationLab, tier4Scenarios } from "./tier4Scenarios.js";
+import { tier4QuestionBanks } from "./tier4QuestionBanks.js";
 
 const letters = ["A", "B", "C", "D"];
 
@@ -1805,7 +1806,7 @@ for (const [
     ],
     terms,
     scenario,
-    questions: tier === 3 ? tier3QuestionBanks[id] : undefined,
+    questions: tier === 3 ? tier3QuestionBanks[id] : tier === 4 ? tier4QuestionBanks[id] : undefined,
   });
 }
 
