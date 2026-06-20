@@ -43,6 +43,8 @@ test('guided path remains usable at each viewport', async ({ page }) => {
 test('global Continue learning opens the next recommended activity', async ({ page }) => {
   await page.locator('.topbar').getByRole('button',{name:/continue learning/i}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.getByLabel(/activity location/i)).toContainText(/Activity 1 of 171/i)
+  await expect(page.getByLabel(/activity location/i)).toContainText(/Lesson/i)
   await expect(page.locator('.activity-title h1')).toContainText(/security controls/i)
 })
 
@@ -55,6 +57,8 @@ test('activity offers Field HQ and advances after completion', async ({ page }) 
   await expect(page.getByRole('button',{name:/field hq home/i})).toBeVisible()
   const firstTitle = await page.locator('.activity-title h1').textContent()
   await page.locator('.activity-complete').click()
+  await expect(page.getByText(/saved\. nice work/i)).toBeVisible()
+  await expect(page.getByText(/up next:/i)).toBeVisible()
   await expect(page.locator('.activity-title h1')).not.toHaveText(firstTitle)
 })
 

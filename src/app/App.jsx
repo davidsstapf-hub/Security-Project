@@ -1554,6 +1554,10 @@ function QuizActivity({ activity, onComplete }) {
 function ActivityView({ activity, progress, onClose, onComplete }) {
   const completed = progress.completedActivityIds.includes(activity.id);
   const hasContent = activity.content || activity.cards || activity.questions;
+  const tier = getTier(`tier-${activity.tierNumber}`);
+  const activityPosition = allActivities.findIndex(
+    (candidate) => candidate.id === activity.id,
+  ) + 1;
   const [readingProgress, setReadingProgress] = useState(0);
   const updateReadingProgress = (event) => {
     const element = event.currentTarget;
@@ -1571,9 +1575,17 @@ function ActivityView({ activity, progress, onClose, onComplete }) {
           <button className="back-button" onClick={onClose}>
             <ArrowLeft size={16} /> Exit activity
           </button>
-          <span className="activity-header__type">
-            {typeLabels[activity.type]}
-          </span>
+          <div className="activity-orientation" aria-label="Activity location">
+            <span>
+              Tier {activity.tierNumber} · {tier?.title ?? "Security+ Path"}
+            </span>
+            <strong>
+              Activity {activityPosition} of {allActivities.length}
+            </strong>
+            <span>
+              {typeLabels[activity.type]} · {activity.duration} min
+            </span>
+          </div>
           <i
             className="reading-progress"
             style={{ width: `${readingProgress}%` }}
@@ -1625,7 +1637,7 @@ function ActivityView({ activity, progress, onClose, onComplete }) {
   );
 }
 
-function CompletionToast({ activity, onClose }) {
+function CompletionToast({ activity, nextActivity, onClose, onOpenNext }) {
   return (
     <div className="completion-toast" role="status">
       <span>
@@ -1635,11 +1647,20 @@ function CompletionToast({ activity, onClose }) {
         <strong>
           {activity.type === "checkpoint"
             ? "Tier checkpoint complete!"
-            : "Progress saved"}
+            : "Saved. Nice work."}
         </strong>
-        <small>{activity.title} · keep the momentum gentle.</small>
+        <small>
+          {nextActivity
+            ? `Up next: ${nextActivity.title}`
+            : `${activity.title} · journey complete.`}
+        </small>
       </div>
-      <button onClick={onClose} aria-label="Dismiss">
+      {nextActivity && (
+        <button className="toast-next" onClick={onOpenNext}>
+          Open next <ArrowRight size={14} />
+        </button>
+      )}
+      <button className="toast-close" onClick={onClose} aria-label="Dismiss">
         <X size={16} />
       </button>
     </div>
@@ -1734,7 +1755,7 @@ export default function App() {
     const nextActivity = getRecommendation(nextDraft).activity;
     persist({ ...nextDraft, currentActivityId: nextActivity?.id ?? null });
     setActivityId(nextActivityId);
-    setToastActivity(activity);
+    setToastActivity({ activity, nextActivity });
     window.setTimeout(() => setToastActivity(null), 4200);
   };
   const activity = activityId ? getActivity(activityId) : null;
@@ -1849,7 +1870,14 @@ export default function App() {
       )}
       {toastActivity && (
         <CompletionToast
-          activity={toastActivity}
+          activity={toastActivity.activity}
+          nextActivity={toastActivity.nextActivity}
+          onOpenNext={() => {
+            if (toastActivity.nextActivity) {
+              setActivityId(toastActivity.nextActivity.id);
+            }
+            setToastActivity(null);
+          }}
           onClose={() => setToastActivity(null)}
         />
       )}

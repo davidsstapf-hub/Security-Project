@@ -584,6 +584,49 @@ body {
   background: linear-gradient(145deg, rgba(0, 217, 255, .18), rgba(8, 123, 255, .075));
   box-shadow: 0 0 0 1px rgba(0, 217, 255, .1), 0 0 34px rgba(0, 217, 255, .25);
 }
+.activity-orientation {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  color: #86a4ad;
+  text-align: center;
+  font: 600 9px/1.35 'DM Mono', monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.activity-orientation strong {
+  color: #e9f8fb;
+  font: 800 12px/1.25 'Manrope', system-ui, sans-serif;
+  letter-spacing: -.01em;
+  text-transform: none;
+}
+.activity-orientation span:last-child {
+  color: var(--green);
+}
+.completion-toast {
+  width: min(520px,calc(100% - 40px));
+}
+.completion-toast .toast-next {
+  min-height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(0, 217, 255, .32);
+  border-radius: 999px;
+  color: #031019;
+  background: linear-gradient(135deg, #22e7ff, #078bff);
+  font-size: 11px;
+  font-weight: 800;
+}
+.completion-toast .toast-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+}
 .answer, .scenario-brief, .exam-status {
   background: linear-gradient(145deg, rgba(10, 25, 32, .96), rgba(7, 17, 22, .96));
 }
@@ -612,6 +655,19 @@ body {
   .tier-node:hover, .activity-row:hover { transform: none; }
   .activity-row { margin-inline: 0; padding-inline: 7px; }
   .stats-row strong { font-size: 20px; }
+  .activity-orientation {
+    justify-items: start;
+    text-align: left;
+  }
+  .activity-orientation span:first-child { display: none; }
+  .completion-toast {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+  }
+  .completion-toast .toast-next {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
 }
 
 .objective-visual { position: relative; margin: -20px 0 58px; padding: 22px; overflow: hidden; border: 1px solid rgba(0,217,255,.2); border-radius: 22px; background: linear-gradient(135deg,rgba(0,217,255,.095),rgba(124,92,255,.055) 52%,rgba(255,190,92,.035)); box-shadow: 0 24px 70px rgba(0,0,0,.24); }

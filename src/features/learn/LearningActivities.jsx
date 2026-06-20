@@ -10,6 +10,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { activityTypeLabels as typeLabels } from "../../content/advancedTiers.js";
+import { allActivities, getTier } from "../../content/studyData.js";
 import { getObjectiveVisual } from "../../content/objectiveVisuals.js";
 import {
   isValidQuestionOrder,
@@ -711,6 +712,9 @@ export function ActivityView({
     activity.cards ||
     activity.questions ||
     activity.actions;
+  const tier = getTier(`tier-${activity.tierNumber}`);
+  const activityPosition =
+    allActivities.findIndex((candidate) => candidate.id === activity.id) + 1;
   const [readingProgress, setReadingProgress] = useState(0);
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
@@ -762,9 +766,17 @@ export function ActivityView({
             <ArrowLeft size={16} />
             Exit
           </button>
-          <span className="activity-header__type">
-            {typeLabels[activity.type]}
-          </span>
+          <div className="activity-orientation" aria-label="Activity location">
+            <span>
+              Tier {activity.tierNumber} · {tier?.title ?? "Security+ Path"}
+            </span>
+            <strong>
+              Activity {activityPosition} of {allActivities.length}
+            </strong>
+            <span>
+              {typeLabels[activity.type]} · {activity.duration} min
+            </span>
+          </div>
           <div className="activity-header__actions">
             {completed && nextActivity && (
               <button
