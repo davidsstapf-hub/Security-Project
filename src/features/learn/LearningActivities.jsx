@@ -117,9 +117,18 @@ export function FlashcardActivity({
   completed,
   nextTitle,
 }) {
+  const cards = useMemo(() => {
+    if (!activity.shuffleCards) return activity.cards;
+    const shuffled = [...activity.cards];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+    return shuffled;
+  }, [activity.id, activity.cards, activity.shuffleCards]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const card = activity.cards[index];
+  const card = cards[index];
   return (
     <>
       <p className="activity-instruction">
@@ -133,7 +142,7 @@ export function FlashcardActivity({
         <span>
           {flipped
             ? "Definition"
-            : `Term ${index + 1} of ${activity.cards.length}`}
+            : `Term ${index + 1} of ${cards.length}`}
         </span>
         <strong>{flipped ? card[1] : card[0]}</strong>
         <small>{flipped ? "Tap to see term" : "Tap to reveal"}</small>
@@ -150,7 +159,7 @@ export function FlashcardActivity({
           <ArrowLeft size={16} />
           Previous
         </button>
-        {index < activity.cards.length - 1 ? (
+        {index < cards.length - 1 ? (
           <button
             className="button button--primary"
             onClick={() => {
