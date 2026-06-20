@@ -119,6 +119,19 @@ test('curriculum filter provides recoverable empty state', async ({ page }) => {
   await expect(page.getByRole('heading',{name:/see the whole mountain/i})).toBeVisible()
 })
 
+test('scenario debrief explains selected, missed, and unnecessary actions', async ({ page }) => {
+  await page.keyboard.press('Control+K')
+  await page.getByRole('textbox',{name:/filter guided curriculum/i}).fill('rushed firewall replacement')
+  await page.locator('.search-module button').first().click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.locator('.answer').first().click()
+  await page.getByRole('button',{name:/submit decision/i}).click()
+  await expect(page.getByLabel(/scenario decision breakdown/i)).toBeVisible()
+  await expect(page.getByText(/recommended selected/i)).toBeVisible()
+  await expect(page.getByText(/recommended but missed/i)).toBeVisible()
+  await expect(page.getByText(/selected but unnecessary/i)).toBeVisible()
+})
+
 test('activity dialog receives focus and restores it on exit', async ({ page }) => {
   const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
   await page.getByRole('button',{name:/learning path/i}).click()

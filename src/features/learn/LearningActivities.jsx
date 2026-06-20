@@ -384,6 +384,15 @@ export function ScenarioActivity({ activity, onComplete, nextTitle }) {
   ).length;
   const possible = activity.actions.filter((action) => action.correct).length;
   const score = Math.max(0, (correct - wrong) / possible);
+  const recommendedSelected = activity.actions.filter(
+    (action) => action.correct && selected.includes(action.id),
+  );
+  const recommendedMissed = activity.actions.filter(
+    (action) => action.correct && !selected.includes(action.id),
+  );
+  const unnecessarySelected = activity.actions.filter(
+    (action) => !action.correct && selected.includes(action.id),
+  );
   if (finished)
     return (
       <div className="activity-results">
@@ -393,6 +402,52 @@ export function ScenarioActivity({ activity, onComplete, nextTitle }) {
         <p className="eyebrow">Scenario debrief</p>
         <h2>{score >= 0.8 ? "Defensible call." : "Useful rehearsal."}</h2>
         <p>{activity.explanation}</p>
+        <div className="scenario-scorecard" aria-label="Scenario decision breakdown">
+          <article>
+            <strong>{recommendedSelected.length}</strong>
+            <span>recommended selected</span>
+          </article>
+          <article>
+            <strong>{recommendedMissed.length}</strong>
+            <span>recommended missed</span>
+          </article>
+          <article>
+            <strong>{unnecessarySelected.length}</strong>
+            <span>unnecessary selected</span>
+          </article>
+        </div>
+        <div className="scenario-review">
+          <section>
+            <h3>Recommended and selected</h3>
+            {recommendedSelected.length ? (
+              recommendedSelected.map((action) => (
+                <p key={action.id}>{action.label}</p>
+              ))
+            ) : (
+              <p>No recommended actions selected.</p>
+            )}
+          </section>
+          <section>
+            <h3>Recommended but missed</h3>
+            {recommendedMissed.length ? (
+              recommendedMissed.map((action) => (
+                <p key={action.id}>{action.label}</p>
+              ))
+            ) : (
+              <p>No recommended actions missed.</p>
+            )}
+          </section>
+          <section>
+            <h3>Selected but unnecessary</h3>
+            {unnecessarySelected.length ? (
+              unnecessarySelected.map((action) => (
+                <p key={action.id}>{action.label}</p>
+              ))
+            ) : (
+              <p>No unnecessary actions selected.</p>
+            )}
+          </section>
+        </div>
         <div className="results-score">
           <strong>{Math.round(score * 100)}%</strong>
           <span>decision score</span>
