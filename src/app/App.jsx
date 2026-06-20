@@ -1035,7 +1035,7 @@ function MeetDevelopersView() {
             <i /> Built by practitioners
           </span>
           <p className="eyebrow">Meet the developers</p>
-          <h2>Security+ study design shaped by real cybersecurity work.</h2>
+          <h2>Security+ study design shaped by real cybersecurity professionals.</h2>
           <p>
             This app was developed strategically by three cybersecurity
             professionals with a combined 30 years of cybersecurity expertise.
