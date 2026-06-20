@@ -12,6 +12,7 @@ import {
   CircleHelp,
   Clock3,
   Command,
+  Contact,
   Gauge,
   GraduationCap,
   Layers3,
@@ -34,6 +35,7 @@ import {
   domains,
   getActivity,
   getTier,
+  masterFlashcardsActivity,
   tiers,
 } from "../content/studyData.js";
 import {
@@ -56,6 +58,7 @@ const navItems = [
   { id: "dashboard", label: "Overview", icon: LayoutDashboard },
   { id: "path", label: "Guided path", icon: Layers3 },
   { id: "domains", label: "Exam domains", icon: BookOpen },
+  { id: "flashcards", label: "Flash Cards", icon: Contact },
   { id: "progress", label: "Progress", icon: BarChart3 },
   { id: "study-guide", label: "How to study", icon: GraduationCap },
   { id: "developers", label: "Meet the developers", icon: UsersRound },
@@ -846,6 +849,49 @@ function ProgressView({ progress }) {
   );
 }
 
+function FlashCardsView({ onOpenActivity }) {
+  return (
+    <div className="page flashcards-page">
+      <section className="flashcards-hero">
+        <div>
+          <span className="status-pill">
+            <i /> Cumulative recall
+          </span>
+          <p className="eyebrow">Flash Cards</p>
+          <h2>Shuffle the whole Security+ deck.</h2>
+          <p>
+            This deck pulls every flashcard from every section into one
+            cumulative review set. Each time you open it, the order is shuffled
+            so you practice recall instead of memorizing a sequence.
+          </p>
+          <button
+            className="button button--primary"
+            onClick={() => onOpenActivity(masterFlashcardsActivity.id)}
+          >
+            Start shuffled deck <ArrowRight size={16} />
+          </button>
+        </div>
+        <div className="flashcards-stat" aria-hidden="true">
+          <Contact size={42} />
+          <strong>{masterFlashcardsActivity.cards.length}</strong>
+          <span>cards from all sections</span>
+        </div>
+      </section>
+      <section className="flashcards-note">
+        <Sparkles size={20} />
+        <div>
+          <strong>Best use</strong>
+          <p>
+            Use this after a tier checkpoint, before exam mode, or whenever you
+            want a fast mixed review across terms, controls, attacks,
+            architecture, operations, and governance.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function StudyGuideView() {
   return (
     <div className="page study-guide-page">
@@ -1588,6 +1634,9 @@ export default function App() {
             />
           ))}
         {active === "domains" && <DomainsView progress={progress} />}
+        {active === "flashcards" && (
+          <FlashCardsView onOpenActivity={openActivity} />
+        )}
         {active === "progress" && (
           <ProgressView progress={progress} />
         )}

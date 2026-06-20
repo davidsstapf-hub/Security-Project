@@ -40,6 +40,14 @@ function assessmentQuestions(tiers, domain) {
     .filter((question) => question.domain === domain)
 }
 
+export function createMasterFlashcardsActivity(tiers) {
+  const flashcards = aggregateFlashcards(tiers)
+  return {
+    id:'master-flashcards',type:'flashcards',title:'Security+ master flash card deck',duration:20,required:false,domain:5,objective:'Cross-domain recall',difficulty:'synthesis',
+    summary:`Review ${flashcards.length} shuffled flashcards pulled from all curriculum sections.`,cards:flashcards,shuffleCards:true,
+  }
+}
+
 function aggregateFlashcards(tiers) {
   return tiers
     .flatMap((tier) => tier.modules.flatMap((module) => module.activities))
@@ -72,22 +80,14 @@ export function createPracticeExamTier(sourceTiers) {
     question.lockedAnswerPosition = true
   })
 
-  const flashcards = aggregateFlashcards(sourceTiers)
-
   return {
-    id:'tier-6',number:6,title:'Practice Exam',subtitle:'Prove the knowledge under pressure',difficulty:'synthesis',color:'#35e6a5',minutes:110,recommendedAfter:5,
+    id:'tier-6',number:6,title:'Practice Exam',subtitle:'Prove the knowledge under pressure',difficulty:'synthesis',color:'#35e6a5',minutes:90,recommendedAfter:5,
     modules:[{
       id:'t6-practice-exam-section',title:'Full-length practice exam',summary:'Eighty original, source-grounded multiple-choice questions across all five domains.',
       activities:[{
         id:'t6-practice-exam',type:'exam',title:'Security+ 80-question practice exam',duration:90,required:true,domain:5,objective:'Cross-domain exam readiness',difficulty:'synthesis',
         summary:'Complete 80 domain-weighted multiple-choice questions with plausible alternatives and objective-level remediation.',questions,
         config:{version:2,durationMinutes:90,questionCount:80,domainWeights:{1:12,2:22,3:18,4:28,5:20},passThreshold:.8,reviewPolicy:'after-submit',allowModeSelection:true},
-      }],
-    },{
-      id:'t6-master-flashcards-section',title:'Flash Cards',summary:'Shuffle every flashcard from every section into one cumulative review deck.',
-      activities:[{
-        id:'t6-master-flashcards',type:'flashcards',title:'Security+ master flash card deck',duration:20,required:false,domain:5,objective:'Cross-domain recall',difficulty:'synthesis',
-        summary:`Review ${flashcards.length} shuffled flashcards pulled from all curriculum sections.`,cards:flashcards,shuffleCards:true,
       }],
     }],
   }

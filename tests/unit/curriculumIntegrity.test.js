@@ -92,19 +92,21 @@ test('Tier 6 distractors are substantive and answer positions remain balanced', 
   assert.ok(Math.max(...counts)-Math.min(...counts) <= 8,JSON.stringify(counts))
 })
 
-test('Tier 6 master flash cards aggregate every section deck and shuffle on open', () => {
+test('standalone master flash cards aggregate every section deck and shuffle on open', () => {
   const tier6 = tiers.find((tier) => tier.number === 6)
-  const master = allActivities.find((activity) => activity.id === 't6-master-flashcards')
+  const master = allActivities.find((activity) => activity.id === 'master-flashcards')
   const sourceCards = tiers
     .filter((tier) => tier.number < 6)
     .flatMap((tier) => tier.modules.flatMap((module) => module.activities))
     .filter((activity) => activity.type === 'flashcards')
     .flatMap((activity) => activity.cards)
 
-  assert.equal(tier6.modules.some((module) => module.title === 'Flash Cards'), true)
+  assert.equal(tier6.modules.some((module) => module.title === 'Flash Cards'), false)
   assert.equal(master.type, 'flashcards')
   assert.equal(master.required, false)
   assert.equal(master.shuffleCards, true)
+  assert.equal(master.tierId, 'standalone-flashcards')
+  assert.equal(master.tierNumber, 'Review')
   assert.equal(master.cards.length, sourceCards.length)
   assert.ok(master.cards.length > 250)
 })

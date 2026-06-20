@@ -7,7 +7,7 @@ import { threatsCards, threatsKnowledgeCheck, threatsReading, threatsSectionQuiz
 import { cryptographyCards, cryptographyKnowledgeCheck, cryptographyReading, cryptographySectionQuiz } from './sections/cryptography.js'
 import { advancedTiers } from './advancedTiers.js'
 import { changeManagementModule, enterpriseCapabilitiesModule } from './supplementalObjectives.js'
-import { createPracticeExamTier } from './practiceExam.js'
+import { createMasterFlashcardsActivity, createPracticeExamTier } from './practiceExam.js'
 
 /** @typedef {'lesson'|'flashcards'|'quiz'|'checkpoint'|'scenario'|'exam'} ActivityType */
 /** @typedef {'foundation'|'developing'|'applied'|'advanced'|'synthesis'} Difficulty */
@@ -178,6 +178,7 @@ const tier4 = fiveTierCurriculum.find((tier) => tier.number === 4)
 tier4.modules.splice(tier4.modules.findIndex((module) => module.id === 't4-final-section'), 0, enterpriseCapabilitiesModule)
 for (const tier of [fiveTierCurriculum[0], tier4]) tier.minutes = tier.modules.flatMap((module) => module.activities).reduce((sum, activity) => sum + activity.duration, 0)
 export const tiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
+export const masterFlashcardsActivity = createMasterFlashcardsActivity(fiveTierCurriculum)
 
 // Deterministically distribute correct answers without changing question meaning.
 // The stable question id controls rotation so updates do not reshuffle saved content.
@@ -190,7 +191,10 @@ for (const tier of tiers) for (const module of tier.modules) for (const activity
   }
 }
 
-export const allActivities = tiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id }))))
+export const allActivities = [
+  ...tiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id })))),
+  { ...masterFlashcardsActivity, tierId: 'standalone-flashcards', tierNumber: 'Review', moduleId: 'master-flashcards-section' },
+]
 
 export function getActivity(activityId) {
   return allActivities.find((activity) => activity.id === activityId)
