@@ -856,35 +856,36 @@ function StudyGuideView() {
           </span>
           <p className="eyebrow">How to study for the Security+</p>
           <h2>
-            Use this app as a companion.
+            Go from zero to Security+ ready.
             <br />
-            <em>Not your only resource.</em>
+            <em>One guided step at a time.</em>
           </h2>
           <p>
-            Security+ covers broad technical foundations that deserve deeper
-            instruction, hands-on practice, and multiple perspectives. Sec+
-            Field Guide is designed to help prepare you—but it is not intended
-            to teach every fundamental from the ground up.
+            Sec+ Field Guide is built as a complete path from first principles
+            through exam synthesis. Start at Tier 1, follow the guided
+            recommendations, and let each lesson, scenario, flashcard deck,
+            quiz, checkpoint, and practice exam build the next layer of your
+            Security+ readiness.
           </p>
         </div>
         <div className="study-guide-mark">
           <GraduationCap size={42} />
           <span>
-            Learn broadly.
+            Start here.
             <br />
-            Review often.
+            Build steadily.
           </span>
         </div>
       </section>
       <section className="study-principle">
         <p className="eyebrow">Our purpose</p>
-        <h3>Micro-learning that keeps important ideas within reach.</h3>
+        <h3>A complete Security+ learning path designed for beginners.</h3>
         <p>
-          Use these focused lessons to revisit a concept quickly, keep
-          terminology fresh with flashcards, and test your understanding with
-          short-form exams. The app works best when it reinforces material you
-          are also learning through a complete course, official exam objectives,
-          documentation, videos, books, labs, and real technical practice.
+          The course starts with foundational language, then moves into threats,
+          architecture, operations, governance, and full exam practice. Use the
+          app in order when you are new, or jump into weak objectives when you
+          already have experience. The goal is not just memorization—it is
+          helping you reason through Security+ scenarios with confidence.
         </p>
       </section>
       <div className="study-method-grid">
@@ -892,76 +893,76 @@ function StudyGuideView() {
           <span>
             <BookOpen size={20} />
           </span>
-          <p className="eyebrow">01 · Learn deeply</p>
-          <h3>Choose a primary course</h3>
+          <p className="eyebrow">01 · Start at the foundation</p>
+          <h3>Follow the tiers in order</h3>
           <p>
-            Follow a comprehensive Security+ course or study guide that explains
-            networking, operating systems, cloud services, identity,
-            cryptography, risk, and operations in depth.
+            Begin with Tier 1 and let the app introduce the vocabulary,
+            objectives, and decision patterns you need before moving into more
+            technical domains.
           </p>
         </article>
         <article>
           <span>
             <Layers3 size={20} />
           </span>
-          <p className="eyebrow">02 · Practice actively</p>
-          <h3>Build and investigate</h3>
+          <p className="eyebrow">02 · Practice as you learn</p>
+          <h3>Use every learning loop</h3>
           <p>
-            Use labs, virtual machines, command-line tools, log samples, and
-            configuration exercises. Security concepts become durable when you
-            see how systems actually behave.
+            Read the lesson, study the objective map, work the scenario, drill
+            the flashcards, complete the coached check, and finish the section
+            quiz before advancing.
           </p>
         </article>
         <article>
           <span>
             <Sparkles size={20} />
           </span>
-          <p className="eyebrow">03 · Review briefly</p>
-          <h3>Use this field guide</h3>
+          <p className="eyebrow">03 · Repair weak spots</p>
+          <h3>Let results guide review</h3>
           <p>
-            Return for short sessions. Read one focused passage, review its
-            flashcards, and revisit terms before they fade. Consistent retrieval
-            is more useful than occasional cramming.
+            When a quiz, checkpoint, or exam exposes a weak objective, return
+            to that lesson and its cards. Short targeted reviews turn misses
+            into durable understanding.
           </p>
         </article>
         <article>
           <span>
             <CircleHelp size={20} />
           </span>
-          <p className="eyebrow">04 · Test honestly</p>
-          <h3>Take short-form exams</h3>
+          <p className="eyebrow">04 · Prove readiness</p>
+          <h3>Use checkpoints and exam mode</h3>
           <p>
-            Answer without notes, read every explanation, and investigate why
-            the wrong choices are wrong. Use missed questions to decide what to
-            study next in your primary resources.
+            Complete each tier checkpoint, then use the comprehensive practice
+            exam in exam mode. Read every explanation afterward and retest only
+            after reviewing missed objectives.
           </p>
         </article>
       </div>
       <section className="study-rhythm">
         <div>
-          <p className="eyebrow">A simple weekly rhythm</p>
-          <h3>Learn → apply → retrieve → adjust</h3>
+          <p className="eyebrow">A simple study rhythm</p>
+          <h3>Learn → practice → test → remediate</h3>
         </div>
         <ol>
           <li>
             <strong>Learn</strong>
-            <span>Study a complete topic through your primary course.</span>
+            <span>Read the next guided lesson and objective map.</span>
           </li>
           <li>
             <strong>Apply</strong>
-            <span>Use a lab or real example to make the idea concrete.</span>
+            <span>Work the scenario and connect the concept to a realistic decision.</span>
           </li>
           <li>
             <strong>Retrieve</strong>
             <span>
-              Review our flashcards and complete a short exam without notes.
+              Review flashcards and answer questions without notes.
             </span>
           </li>
           <li>
             <strong>Adjust</strong>
             <span>
-              Return to weak objectives and repeat until you can explain them
-              clearly.
+              Revisit weak objectives until you can explain the right answer
+              and why the distractors are wrong.
             </span>
           </li>
         </ol>
@@ -971,9 +972,11 @@ function StudyGuideView() {
         <div>
           <strong>Preparation, not a guarantee.</strong>
           <p>
-            No study tool can guarantee a passing score. Always compare your
-            preparation against the current official CompTIA Security+ exam
-            objectives and use several reliable resources.
+            This app is designed to take a learner from zero to Security+
+            readiness, but no study tool can guarantee a passing score. Always
+            compare your preparation against the current official CompTIA
+            Security+ exam objectives and use the resources below when you want
+            another explanation or extra practice.
           </p>
         </div>
       </aside>
