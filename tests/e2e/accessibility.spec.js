@@ -112,3 +112,27 @@ test('activity dialog receives focus and restores it on exit', async ({ page }) 
   await page.getByRole('button',{name:'Exit',exact:true}).click()
   await expect(trigger).toBeFocused()
 })
+
+test('Flash Cards sidebar page launches the cumulative shuffled deck', async ({ page }) => {
+  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:'Flash Cards',exact:true}).click()
+  await expect(page.getByRole('heading',{name:/shuffle the whole security\+ deck/i})).toBeVisible()
+  await expect(page.getByText(/cards from all sections/i)).toBeVisible()
+  await page.getByRole('button',{name:/start shuffled deck/i}).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
+})
+
+test('value sidebar pages show market and app proof points', async ({ page }) => {
+  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:/why the security\+\?/i}).click()
+  await expect(page.getByRole('heading',{name:/cybersecurity keeps growing/i})).toBeVisible()
+  await expect(page.getByText('$124,910')).toBeVisible()
+  await expect(page.getByText(/projected growth/i)).toBeVisible()
+
+  if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:/why choose this app\?/i}).click()
+  await expect(page.getByRole('heading',{name:/security\+ prep without the maze/i})).toBeVisible()
+  await expect(page.getByText(/assessment questions with explanations/i)).toBeVisible()
+  await expect(page.getByText(/flashcards in the cumulative deck/i)).toBeVisible()
+})

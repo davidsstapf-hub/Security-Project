@@ -55,7 +55,7 @@ import {
 } from "../lib/curriculumSearch.js";
 import { ActivityView as LearningActivityView } from "../features/learn/LearningActivities.jsx";
 
-const navItems = [
+const primaryNavItems = [
   { id: "dashboard", label: "Overview", icon: LayoutDashboard },
   { id: "path", label: "Guided path", icon: Layers3 },
   { id: "domains", label: "Exam domains", icon: BookOpen },
@@ -63,9 +63,14 @@ const navItems = [
   { id: "progress", label: "Progress", icon: BarChart3 },
   { id: "study-guide", label: "How to study", icon: GraduationCap },
   { id: "developers", label: "Meet the developers", icon: UsersRound },
+];
+
+const aboutNavItems = [
   { id: "why-security", label: "Why the Security+?", icon: TrendingUp },
   { id: "why-app", label: "Why choose this app?", icon: Award },
 ];
+
+const navItems = [...primaryNavItems, ...aboutNavItems];
 
 const typeLabels = {
   lesson: "Lesson",
@@ -78,6 +83,21 @@ const typeLabels = {
 
 function Sidebar({ active, onNavigate, open, onClose, progress }) {
   const overall = getOverallProgress(progress);
+  const renderNavItem = ({ id, label, icon: Icon }) => (
+    <button
+      key={id}
+      className={`nav__item ${active === id ? "nav__item--active" : ""}`}
+      onClick={() => {
+        onNavigate(id);
+        onClose();
+      }}
+    >
+      <Icon size={18} />
+      <span>{label}</span>
+      {id === "path" && <span className="nav__badge">{tiers.length}</span>}
+    </button>
+  );
+
   return (
     <aside className={`sidebar ${open ? "sidebar--open" : ""}`}>
       <div className="brand">
@@ -105,23 +125,14 @@ function Sidebar({ active, onNavigate, open, onClose, progress }) {
         <X size={20} />
       </button>
       <nav className="nav" aria-label="Main navigation">
-        <p className="eyebrow">Workspace</p>
-        {navItems.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={`nav__item ${active === id ? "nav__item--active" : ""}`}
-            onClick={() => {
-              onNavigate(id);
-              onClose();
-            }}
-          >
-            <Icon size={18} />
-            <span>{label}</span>
-            {id === "path" && (
-              <span className="nav__badge">{tiers.length}</span>
-            )}
-          </button>
-        ))}
+        <div className="nav__group">
+          <p className="eyebrow">Workspace</p>
+          {primaryNavItems.map(renderNavItem)}
+        </div>
+        <div className="nav__group nav__group--about">
+          <p className="eyebrow">About</p>
+          {aboutNavItems.map(renderNavItem)}
+        </div>
       </nav>
       <div className="sidebar__mission">
         <div className="mission__icon">
