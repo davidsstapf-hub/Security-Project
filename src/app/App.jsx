@@ -1013,7 +1013,20 @@ function StudyGuideView() {
 }
 
 function MeetDevelopersView() {
-  const team = ["David", "Ryan", "Russ"];
+  const team = [
+    {
+      name: "David",
+      specialty: "Specializes in network security and infrastructure.",
+    },
+    {
+      name: "Ryan",
+      specialty: "Specializes in Corporate Cyber Security and Data Integrity.",
+    },
+    {
+      name: "Russ",
+      specialty: "Specializes in all aspects of IT and cybersecurity.",
+    },
+  ];
   return (
     <div className="page developers-page">
       <section className="developers-hero">
@@ -1045,14 +1058,19 @@ function MeetDevelopersView() {
           </div>
         </div>
         <div className="team-grid">
-          {team.map((name, index) => (
-            <article key={name} className="team-card">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <div className="team-card__avatar">
-                {name.slice(0, 1)}
+          {team.map((member) => (
+            <article key={member.name} className="team-card">
+              <div className="team-card__figure" aria-hidden="true">
+                <span className="team-card__head" />
+                <span className="team-card__body" />
+                <span className="team-card__arm team-card__arm--left" />
+                <span className="team-card__arm team-card__arm--right" />
+                <span className="team-card__leg team-card__leg--left" />
+                <span className="team-card__leg team-card__leg--right" />
               </div>
-              <h4>{name}</h4>
-              <p>Cybersecurity professional · Current Security+ certified</p>
+              <h4>{member.name}</h4>
+              <p>{member.specialty}</p>
+              <small>Current Security+ certified</small>
             </article>
           ))}
         </div>
