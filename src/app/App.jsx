@@ -1060,13 +1060,19 @@ function MeetDevelopersView() {
         <div className="team-grid">
           {team.map((member) => (
             <article key={member.name} className="team-card">
-              <div className="team-card__figure" aria-hidden="true">
-                <span className="team-card__head" />
-                <span className="team-card__body" />
-                <span className="team-card__arm team-card__arm--left" />
-                <span className="team-card__arm team-card__arm--right" />
-                <span className="team-card__leg team-card__leg--left" />
-                <span className="team-card__leg team-card__leg--right" />
+              <div className="team-card__scene" aria-hidden="true">
+                <div className="team-card__figure">
+                  <span className="team-card__head" />
+                  <span className="team-card__body" />
+                  <span className="team-card__arm team-card__arm--left" />
+                  <span className="team-card__arm team-card__arm--right" />
+                  <span className="team-card__leg team-card__leg--left" />
+                  <span className="team-card__leg team-card__leg--right" />
+                </div>
+                <div className="team-card__desk">
+                  <span className="team-card__monitor" />
+                  <span className="team-card__keyboard" />
+                </div>
               </div>
               <h4>{member.name}</h4>
               <p>{member.specialty}</p>
