@@ -96,6 +96,7 @@ test('Tier 6 Practice Mode reveals answers before continuing', async ({ page }) 
   await page.locator('.answer').first().click()
   await page.getByRole('button',{name:/show answer/i}).click()
   await expect(page.locator('.explanation')).toBeVisible()
+  await expect(page.getByText(/exam takeaway/i)).toBeVisible()
   await expect(page.getByRole('button',{name:/next/i})).toBeEnabled()
 })
 

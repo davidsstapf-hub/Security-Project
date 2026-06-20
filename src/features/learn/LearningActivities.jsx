@@ -40,6 +40,27 @@ function ObjectiveVisual({ visual }) {
   );
 }
 
+function QuestionFeedback({ correct, explanation }) {
+  return (
+    <div
+      className={`explanation ${correct ? "explanation--correct" : ""}`}
+      role="status"
+    >
+      <span className="feedback-kicker">
+        {correct ? "Correct answer" : "Review before moving on"}
+      </span>
+      <strong>Exam takeaway</strong>
+      <p>{explanation}</p>
+      {!correct && (
+        <small>
+          Slow down here: this is exactly the kind of distinction Security+
+          likes to test.
+        </small>
+      )}
+    </div>
+  );
+}
+
 export function LessonActivity({ activity, onComplete, completed, nextTitle }) {
   const objectiveVisual = getObjectiveVisual(activity);
   return (
@@ -324,17 +345,10 @@ export function QuizActivity({ activity, onComplete, nextTitle }) {
         })}
       </div>
       {answered && (
-        <div
-          className={`explanation ${selected === question.correctIndex ? "explanation--correct" : ""}`}
-          role="status"
-        >
-          <strong>
-            {selected === question.correctIndex
-              ? "Correct — clean read."
-              : "Not quite. Here’s the distinction."}
-          </strong>
-          <p>{question.explanation}</p>
-        </div>
+        <QuestionFeedback
+          correct={selected === question.correctIndex}
+          explanation={question.explanation}
+        />
       )}
       <div className="quiz-footer">
         <span>{correct} correct so far</span>
@@ -675,17 +689,10 @@ export function ExamActivity({ activity, onComplete, nextTitle }) {
         })}
       </div>
       {mode === "practice" && revealed && (
-        <div
-          className={`explanation ${answers[index] === question.correctIndex ? "explanation--correct" : ""}`}
-          role="status"
-        >
-          <strong>
-            {answers[index] === question.correctIndex
-              ? "Correct — clean read."
-              : "Not quite. Here’s the distinction."}
-          </strong>
-          <p>{question.explanation}</p>
-        </div>
+        <QuestionFeedback
+          correct={answers[index] === question.correctIndex}
+          explanation={question.explanation}
+        />
       )}
       {mode === "practice" && !revealed && (
         <div className="practice-reveal">
