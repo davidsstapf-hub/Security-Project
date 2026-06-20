@@ -57,11 +57,11 @@ import { ActivityView as LearningActivityView } from "../features/learn/Learning
 
 const primaryNavItems = [
   { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-  { id: "path", label: "Guided path", icon: Layers3 },
-  { id: "domains", label: "Exam domains", icon: BookOpen },
+  { id: "path", label: "Learning Path", icon: Layers3 },
+  { id: "domains", label: "Exam Domains", icon: BookOpen },
   { id: "flashcards", label: "Flash Cards", icon: Contact },
   { id: "progress", label: "Progress", icon: BarChart3 },
-  { id: "study-guide", label: "How to study", icon: GraduationCap },
+  { id: "study-guide", label: "How to Use This App", icon: GraduationCap },
   { id: "developers", label: "Meet the developers", icon: UsersRound },
 ];
 
@@ -160,7 +160,15 @@ function Sidebar({ active, onNavigate, open, onClose, progress }) {
   );
 }
 
-function Topbar({ title, onMenu, query, onQueryChange, onSearchActivate }) {
+function Topbar({
+  title,
+  onMenu,
+  query,
+  onQueryChange,
+  onSearchActivate,
+  recommendation,
+  onContinue,
+}) {
   const inputRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
   useEffect(() => {
@@ -201,6 +209,17 @@ function Topbar({ title, onMenu, query, onQueryChange, onSearchActivate }) {
         <h1>{title}</h1>
       </div>
       <div className={`topbar__actions ${searchOpen ? "search-open" : ""}`}>
+        {recommendation?.activity && (
+          <button
+            className="continue-learning"
+            onClick={onContinue}
+            aria-label="Continue learning"
+            title="Continue learning"
+          >
+            <Play size={15} />
+            <span>Continue learning</span>
+          </button>
+        )}
         <button
           className="search-toggle"
           onClick={() => {
@@ -1697,10 +1716,17 @@ export default function App() {
   const nextActivity =
     activityIndex >= 0 ? (allActivities[activityIndex + 1] ?? null) : null;
   const selectedTier = selectedTierId ? getTier(selectedTierId) : null;
+  const topbarRecommendation = getRecommendation(progress);
 
   const activateSearch = () => {
     setActive("path");
     setSelectedTierId(null);
+  };
+  const continueLearning = () => {
+    const next = topbarRecommendation.activity;
+    if (!next) return;
+    setSelectedTierId(next.tierId);
+    openActivity(next.id);
   };
   return (
     <div className="app-shell">
@@ -1728,6 +1754,8 @@ export default function App() {
           query={searchQuery}
           onQueryChange={setSearchQuery}
           onSearchActivate={activateSearch}
+          recommendation={topbarRecommendation}
+          onContinue={continueLearning}
         />
         {active === "dashboard" && (
           <Dashboard

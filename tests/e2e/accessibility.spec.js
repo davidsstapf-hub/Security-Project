@@ -28,15 +28,21 @@ test('dashboard circuitry stays behind the guided journey', async ({ page }) => 
 test('guided path remains usable at each viewport', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   await expect(page.getByRole('heading',{name:/see the whole mountain/i})).toBeVisible()
   await expect(page.locator('body')).not.toHaveCSS('overflow-x','scroll')
+})
+
+test('global Continue learning opens the next recommended activity', async ({ page }) => {
+  await page.locator('.topbar').getByRole('button',{name:/continue learning/i}).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.locator('.activity-title h1')).toContainText(/security controls/i)
 })
 
 test('activity offers Field HQ and advances after completion', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   await page.locator('.tier-node').first().click()
   await page.locator('.activity-row').first().click()
   await expect(page.getByRole('button',{name:/field hq home/i})).toBeVisible()
@@ -48,7 +54,7 @@ test('activity offers Field HQ and advances after completion', async ({ page }) 
 test('sidebar shield returns to Overview home', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   if (await menu.isVisible()) await menu.click()
   await page.getByRole('button',{name:/return to overview home/i}).click()
   await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible()
@@ -57,7 +63,7 @@ test('sidebar shield returns to Overview home', async ({ page }) => {
 test('Tier 6 launches the 80-question practice exam', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   await page.locator('.tier-node').last().click()
   await expect(page.getByRole('heading',{name:'Practice Exam',exact:true})).toBeVisible()
   await page.locator('.activity-row').first().click()
@@ -72,7 +78,7 @@ test('Tier 6 launches the 80-question practice exam', async ({ page }) => {
 test('Tier 6 Practice Mode reveals answers before continuing', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   await page.locator('.tier-node').last().click()
   await page.locator('.activity-row').first().click()
   await page.getByRole('button',{name:/practice mode/i}).click()
@@ -103,7 +109,7 @@ test('curriculum filter provides recoverable empty state', async ({ page }) => {
 
 test('activity dialog receives focus and restores it on exit', async ({ page }) => {
   const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:/guided path/i}).click()
+  await page.getByRole('button',{name:/learning path/i}).click()
   await page.locator('.tier-node').first().click()
   const trigger=page.locator('.activity-row').first()
   await trigger.click()
