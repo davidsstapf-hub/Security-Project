@@ -138,6 +138,17 @@ test('Flash Cards sidebar page launches the cumulative shuffled deck', async ({ 
   await page.getByRole('button',{name:/start shuffled deck/i}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
+  await expect(page.getByText(/448 remaining/i)).toBeVisible()
+  await expect(page.getByText(/Space \/ Enter to flip/i)).toBeVisible()
+  const card = page.locator('.flashcard')
+  await card.focus()
+  await page.keyboard.press('Space')
+  await expect(card).toHaveAttribute('aria-pressed','true')
+  await expect(page.getByText(/Definition shown/i)).toBeVisible()
+  await page.getByRole('button',{name:/restart deck/i}).click()
+  await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
+  await page.getByRole('button',{name:/shuffle again/i}).click()
+  await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
 })
 
 test('value sidebar pages show market and app proof points', async ({ page }) => {

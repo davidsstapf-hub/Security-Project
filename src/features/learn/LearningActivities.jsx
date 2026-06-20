@@ -5,6 +5,7 @@ import {
   Check,
   CheckCircle2,
   Layers3,
+  RotateCcw,
   ShieldCheck,
   Sparkles,
   Trophy,
@@ -118,6 +119,7 @@ export function FlashcardActivity({
   completed,
   nextTitle,
 }) {
+  const [shuffleNonce, setShuffleNonce] = useState(0);
   const cards = useMemo(() => {
     if (!activity.shuffleCards) return activity.cards;
     const shuffled = [...activity.cards];
@@ -126,19 +128,37 @@ export function FlashcardActivity({
       [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
     }
     return shuffled;
-  }, [activity.id, activity.cards, activity.shuffleCards]);
+  }, [activity.id, activity.cards, activity.shuffleCards, shuffleNonce]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const card = cards[index];
+  const cardsRemaining = cards.length - index - 1;
+  const restartDeck = () => {
+    setIndex(0);
+    setFlipped(false);
+  };
+  const shuffleAgain = () => {
+    setShuffleNonce((value) => value + 1);
+    restartDeck();
+  };
   return (
     <>
       <p className="activity-instruction">
-        Tap the card to reveal the meaning. Move at your own pace—this is
-        retrieval practice, not a test.
+        Tap the card to reveal the meaning. Space or Enter flips the focused
+        card. Move at your own pace—this is retrieval practice, not a test.
       </p>
+      <div className="flashcard-session" aria-live="polite">
+        <span>
+          Card {index + 1} of {cards.length}
+        </span>
+        <span>{cardsRemaining} remaining</span>
+        <span>Space / Enter to flip</span>
+      </div>
       <button
         className={`flashcard ${flipped ? "flashcard--flipped" : ""}`}
         onClick={() => setFlipped(!flipped)}
+        aria-pressed={flipped}
+        aria-label={`${flipped ? "Definition" : "Term"} card ${index + 1} of ${cards.length}. ${flipped ? "Activate to show term." : "Activate to reveal definition."}`}
       >
         <span>
           {flipped
@@ -146,8 +166,20 @@ export function FlashcardActivity({
             : `Term ${index + 1} of ${cards.length}`}
         </span>
         <strong>{flipped ? card[1] : card[0]}</strong>
-        <small>{flipped ? "Tap to see term" : "Tap to reveal"}</small>
+        <small>{flipped ? "Definition shown · tap to see term" : "Tap, Space, or Enter to reveal"}</small>
       </button>
+      <div className="flashcard-tools">
+        <button className="text-button" onClick={restartDeck}>
+          <RotateCcw size={14} />
+          Restart deck
+        </button>
+        {activity.shuffleCards && (
+          <button className="text-button" onClick={shuffleAgain}>
+            <Sparkles size={14} />
+            Shuffle again
+          </button>
+        )}
+      </div>
       <div className="flashcard-controls">
         <button
           className="button button--ghost"
