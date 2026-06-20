@@ -339,6 +339,35 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--green); out
 .button:focus-visible,.answer:focus-visible,.flashcard:focus-visible,.activity-row:focus-visible,.nav__item:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .activity-header__actions{display:flex;align-items:center;gap:9px}.field-hq,.activity-next{min-height:40px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,217,255,.2);border-radius:10px;color:#b7d7df;background:rgba(0,217,255,.035);cursor:pointer;font:600 8px 'DM Mono',monospace;letter-spacing:.09em}.field-hq{padding:5px 11px 5px 6px}.field-hq span{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;color:#031019;background:linear-gradient(145deg,#2af2ff,#087bff);box-shadow:0 0 18px rgba(0,217,255,.2)}.activity-next{padding:0 11px;color:var(--green);text-transform:uppercase}.field-hq:hover,.activity-next:hover{border-color:rgba(0,217,255,.55);background:rgba(0,217,255,.09)}.field-hq:focus-visible,.activity-next:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(max-width:560px){.activity-header__type{display:none}.field-hq b{display:none}.field-hq{padding:5px}.activity-next{min-height:38px}.activity-complete{height:auto;min-height:52px;padding:11px 15px;line-height:1.35}}
 .exam-mode-picker{text-align:center}.exam-mode-picker>p:not(.eyebrow){color:var(--muted);font-size:11px}.exam-mode-picker>div{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.exam-mode-picker button{min-height:230px;padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:13px;border:1px solid var(--line);border-radius:16px;color:#dff4fa;background:linear-gradient(145deg,rgba(0,217,255,.07),rgba(8,123,255,.025));text-align:left;cursor:pointer}.exam-mode-picker button:hover{border-color:rgba(0,217,255,.5);transform:translateY(-2px)}.exam-mode-picker button>svg,.exam-mode-picker button b{color:var(--green)}.exam-mode-picker button strong{font-size:20px}.exam-mode-picker button span{color:var(--muted);font-size:11px;line-height:1.7}.exam-mode-picker button b{margin-top:auto;font:600 9px 'DM Mono',monospace;text-transform:uppercase}.practice-reveal{margin-top:18px;display:flex;justify-content:flex-end}@media(max-width:620px){.exam-mode-picker>div{grid-template-columns:1fr}.exam-mode-picker button{min-height:190px}}
+.exam-mode-picker .exam-briefing {
+  margin: 26px 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.exam-briefing article {
+  padding: 16px 12px;
+  border: 1px solid rgba(0, 217, 255, .16);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(0,217,255,.055), rgba(255,255,255,.014));
+}
+.exam-briefing strong,
+.exam-briefing span {
+  display: block;
+}
+.exam-briefing strong {
+  color: #f2fbff;
+  font-size: 22px;
+  letter-spacing: -.04em;
+}
+.exam-briefing span {
+  margin-top: 5px;
+  color: #8faab3;
+  font: 700 9px/1.35 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+@media(max-width:620px){.exam-mode-picker .exam-briefing{grid-template-columns:1fr 1fr}.exam-briefing article{padding:13px 10px}}
 
 /* Keep dashboard decoration atmospheric and the daily target visually quiet. */
 .dashboard .daily-panel { padding: 27px; overflow: hidden; border-color: rgba(0,217,255,.18); background: linear-gradient(150deg,#091820 0%,#071116 62%,#08151a 100%); box-shadow: 0 18px 45px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.02); }

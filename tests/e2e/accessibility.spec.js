@@ -79,6 +79,8 @@ test('Tier 6 launches the 80-question practice exam', async ({ page }) => {
   await expect(page.getByRole('heading',{name:'Practice Exam',exact:true})).toBeVisible()
   await page.locator('.activity-row').first().click()
   await expect(page.getByRole('heading',{name:/how do you want to train/i})).toBeVisible()
+  await expect(page.getByLabel(/practice exam details/i)).toContainText(/80/)
+  await expect(page.getByText(/new order each run/i)).toBeVisible()
   await page.getByRole('button',{name:/exam mode/i}).click()
   await expect(page.getByText(/Question 1 of 80/i)).toBeVisible()
   await page.locator('.answer').first().click()

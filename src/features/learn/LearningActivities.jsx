@@ -622,15 +622,34 @@ export function ExamActivity({ activity, onComplete, nextTitle }) {
         <p className="eyebrow">Choose your run</p>
         <h2>How do you want to train?</h2>
         <p>
-          Both modes use the same 80-question bank and save your final result.
+          Both modes use the same question bank, shuffle the order every new
+          attempt, preserve your in-progress run, and save your final result.
         </p>
+        <div className="exam-briefing" aria-label="Practice exam details">
+          <article>
+            <strong>{activity.questions.length}</strong>
+            <span>questions</span>
+          </article>
+          <article>
+            <strong>{activity.config.durationMinutes}</strong>
+            <span>minutes</span>
+          </article>
+          <article>
+            <strong>{Math.round(activity.config.passThreshold * 100)}%</strong>
+            <span>target score</span>
+          </article>
+          <article>
+            <strong>Shuffle</strong>
+            <span>new order each run</span>
+          </article>
+        </div>
         <div>
           <button onClick={() => begin("practice")}>
             <Sparkles size={24} />
             <strong>Practice Mode</strong>
             <span>
-              Select an answer, reveal it immediately, and study the explanation
-              before continuing.
+              Reveal each answer immediately, read the exam takeaway, and use
+              the run as coached review.
             </span>
             <b>
               Learn as you go <ArrowRight size={15} />
@@ -640,8 +659,8 @@ export function ExamActivity({ activity, onComplete, nextTitle }) {
             <Trophy size={24} />
             <strong>Exam Mode</strong>
             <span>
-              No answer feedback or score appears until all questions are
-              submitted.
+              Hide feedback until submission, keep the timer honest, and review
+              domain/objective misses at the end.
             </span>
             <b>
               Simulate the exam <ArrowRight size={15} />
