@@ -457,6 +457,34 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           </div>
         </article>
       </section>
+      <section className="start-card" aria-labelledby="start-card-title">
+        <div className="start-card__icon">
+          <GraduationCap size={24} />
+        </div>
+        <div>
+          <p className="eyebrow">
+            {progress.completedActivityIds.length ? "Keep going" : "Start here"}
+          </p>
+          <h3 id="start-card-title">
+            {progress.completedActivityIds.length
+              ? "Your next small win is already picked."
+              : "New to cybersecurity? Start at zero and follow the trail."}
+          </h3>
+          <p>
+            {progress.completedActivityIds.length
+              ? "Use the recommendation to continue in order, then review anything under 80% before moving too far ahead."
+              : "Begin with Tier 1. Each lesson gives you the language, examples, flashcards, checks, and quizzes you need before the app moves you forward."}
+          </p>
+        </div>
+        <button
+          className="button button--primary"
+          disabled={!next}
+          onClick={() => next && onOpenActivity(next.id)}
+        >
+          {next ? "Open next activity" : "Journey complete"}
+          <ArrowRight size={16} />
+        </button>
+      </section>
       <div className="guided-layout guided-layout--wide">
         <section className="panel journey-panel">
           <div className="section-heading">

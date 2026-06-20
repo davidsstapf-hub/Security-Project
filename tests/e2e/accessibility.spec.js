@@ -25,6 +25,13 @@ test('dashboard circuitry stays behind the guided journey', async ({ page }) => 
   await expect(circuit).toBeAttached()
 })
 
+test('Overview gives new learners a clear start card', async ({ page }) => {
+  await expect(page.getByRole('heading',{name:/start at zero and follow the trail/i})).toBeVisible()
+  await page.getByRole('button',{name:/open next activity/i}).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.locator('.activity-title h1')).toContainText(/security controls/i)
+})
+
 test('guided path remains usable at each viewport', async ({ page }) => {
   const menu = page.getByRole('button',{name:/open navigation/i})
   if (await menu.isVisible()) await menu.click()
