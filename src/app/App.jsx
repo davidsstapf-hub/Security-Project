@@ -24,6 +24,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
+  TrendingUp,
   Target,
   Trophy,
   UsersRound,
@@ -62,6 +63,8 @@ const navItems = [
   { id: "progress", label: "Progress", icon: BarChart3 },
   { id: "study-guide", label: "How to study", icon: GraduationCap },
   { id: "developers", label: "Meet the developers", icon: UsersRound },
+  { id: "why-security", label: "Why the Security+?", icon: TrendingUp },
+  { id: "why-app", label: "Why choose this app?", icon: Award },
 ];
 
 const typeLabels = {
@@ -1134,6 +1137,116 @@ function MeetDevelopersView() {
   );
 }
 
+function WhySecurityView() {
+  const marketStats = [
+    { value: "29%", label: "projected growth for information security analysts, 2024–2034" },
+    { value: "$124,910", label: "2024 median annual pay for information security analysts" },
+    { value: "1", label: "vendor-neutral certification that validates security foundations" },
+  ];
+  return (
+    <div className="page info-page">
+      <section className="info-hero">
+        <div>
+          <span className="status-pill">
+            <i /> Career signal
+          </span>
+          <p className="eyebrow">Why the Security+?</p>
+          <h2>Cybersecurity keeps growing because every organization now runs on risk.</h2>
+          <p>
+            Cloud platforms, remote work, identity systems, ransomware,
+            compliance pressure, third-party dependencies, and constant data
+            movement have made cybersecurity a core business function. Security+
+            is a practical starting credential because it proves you understand
+            the common language of controls, threats, architecture, operations,
+            risk, and governance.
+          </p>
+        </div>
+        <div className="info-stat-card">
+          <TrendingUp size={42} />
+          <strong>29%</strong>
+          <span>projected job growth</span>
+        </div>
+      </section>
+      <div className="info-stat-grid">
+        {marketStats.map((stat) => (
+          <article key={stat.value} className="panel info-stat">
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </article>
+        ))}
+      </div>
+      <section className="panel info-copy">
+        <h3>Why it matters for new learners</h3>
+        <p>
+          Security+ can help a learner show baseline readiness for analyst,
+          help desk, systems, network, cloud, compliance, and junior security
+          roles. It does not replace hands-on experience, but it gives hiring
+          teams a recognizable signal that you can reason about security
+          fundamentals across technical and business contexts.
+        </p>
+        <small>
+          Labor-market figures reference the U.S. Bureau of Labor Statistics
+          Occupational Outlook Handbook for Information Security Analysts.
+        </small>
+      </section>
+    </div>
+  );
+}
+
+function WhyChooseAppView() {
+  const questionCount = allActivities.flatMap((activity) => activity.questions ?? []).length;
+  const appStats = [
+    { value: tiers.length, label: "guided tiers from foundations to practice exam" },
+    { value: allActivities.length, label: "learning activities, labs, checks, quizzes, and exams" },
+    { value: questionCount, label: "assessment questions with explanations" },
+    { value: masterFlashcardsActivity.cards.length, label: "flashcards in the cumulative deck" },
+  ];
+  return (
+    <div className="page info-page">
+      <section className="info-hero info-hero--app">
+        <div>
+          <span className="status-pill">
+            <i /> Built for momentum
+          </span>
+          <p className="eyebrow">Why choose this app?</p>
+          <h2>Security+ prep without the maze.</h2>
+          <p>
+            Sec+ Field Guide gives you a clear path, focused lessons, realistic
+            scenarios, coached checks, cumulative review, and practice exams
+            without burying you in fluff. It is designed to help you learn the
+            objective, practice the decision, test the concept, and immediately
+            know what to review next.
+          </p>
+        </div>
+        <div className="info-stat-card">
+          <Award size={42} />
+          <strong>{questionCount}</strong>
+          <span>questions with explanations</span>
+        </div>
+      </section>
+      <div className="info-stat-grid">
+        {appStats.map((stat) => (
+          <article key={stat.label} className="panel info-stat">
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </article>
+        ))}
+      </div>
+      <section className="panel info-copy">
+        <h3>What we offer</h3>
+        <p>
+          You get a zero-to-Security+ learning path, original questions,
+          shuffled flashcards, practice and exam modes, objective-based
+          remediation, progress tracking, mobile-friendly layouts, and a simple
+          interface that keeps the next step obvious. The goal is clarity:
+          learn what matters, practice it often, and remove unnecessary noise
+          from the cybersecurity learning process.
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function LessonActivity({ activity, onComplete, completed }) {
   return (
     <>
@@ -1642,6 +1755,8 @@ export default function App() {
         )}
         {active === "study-guide" && <StudyGuideView />}
         {active === "developers" && <MeetDevelopersView />}
+        {active === "why-security" && <WhySecurityView />}
+        {active === "why-app" && <WhyChooseAppView />}
       </main>
       {showWelcome && (
         <Onboarding
