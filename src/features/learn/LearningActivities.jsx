@@ -2,16 +2,29 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeCheck,
+  Binary,
+  Blocks,
+  Bug,
   Check,
   CheckCircle2,
+  ClipboardCheck,
+  Cloud,
+  Database,
+  Fingerprint,
+  KeyRound,
   Layers3,
+  Network,
+  Radar,
   RotateCcw,
+  Scale,
   ShieldCheck,
   Sparkles,
   Trophy,
+  UserCheck,
 } from "lucide-react";
 import { activityTypeLabels as typeLabels } from "../../content/advancedTiers.js";
-import { allActivities, getTier } from "../../content/studyData.js";
+import { allActivities, domains, getTier } from "../../content/studyData.js";
 import { getObjectiveVisual } from "../../content/objectiveVisuals.js";
 import {
   isValidQuestionOrder,
@@ -37,6 +50,64 @@ function ObjectiveVisual({ visual }) {
         ))}
       </div>
     </section>
+  );
+}
+
+const objectivePictureMotifs = {
+  controls: { icon: Blocks, label: "Layered controls" },
+  triad: { icon: BadgeCheck, label: "CIA triad" },
+  flow: { icon: ClipboardCheck, label: "Change workflow" },
+  chain: { icon: KeyRound, label: "Cryptographic trust" },
+  attack: { icon: Bug, label: "Attack path" },
+  stack: { icon: Cloud, label: "Architecture stack" },
+  zeroTrust: { icon: Fingerprint, label: "Zero trust check" },
+  lifecycle: { icon: Database, label: "Data lifecycle" },
+  timeline: { icon: RotateCcw, label: "Recovery timeline" },
+  baseline: { icon: Binary, label: "Secure baseline" },
+  funnel: { icon: Radar, label: "Vulnerability triage" },
+  signal: { icon: Radar, label: "Investigation signals" },
+  identity: { icon: UserCheck, label: "Identity lifecycle" },
+  governance: { icon: Scale, label: "Governance ladder" },
+  risk: { icon: Network, label: "Risk loop" },
+  vendor: { icon: Network, label: "Third-party dependency" },
+  audit: { icon: ClipboardCheck, label: "Control evidence" },
+  resilience: { icon: ShieldCheck, label: "Resilience program" },
+};
+
+function ObjectivePicture({ activity, visual, color }) {
+  if (!visual) return null;
+  const objectiveLabel = `Domain ${activity.domain} objective ${activity.objective}`;
+  const motif = objectivePictureMotifs[visual.theme] ?? {
+    icon: ShieldCheck,
+    label: "Security objective",
+  };
+  const MotifIcon = motif.icon;
+  return (
+    <figure
+      className={`objective-picture objective-picture--${visual.theme}`}
+      style={{ "--objective-color": color }}
+      aria-label={`${objectiveLabel}: ${visual.title}`}
+    >
+      <div className="objective-picture__scene" role="img" aria-hidden="true">
+        <span className="objective-picture__device">
+          <MotifIcon size={42} />
+        </span>
+        <span className="objective-picture__ring objective-picture__ring--one" />
+        <span className="objective-picture__ring objective-picture__ring--two" />
+        <span className="objective-picture__node objective-picture__node--one" />
+        <span className="objective-picture__node objective-picture__node--two" />
+        <span className="objective-picture__node objective-picture__node--three" />
+        <span className="objective-picture__scan" />
+        <span className="objective-picture__panel objective-picture__panel--one" />
+        <span className="objective-picture__panel objective-picture__panel--two" />
+        <span className="objective-picture__trace objective-picture__trace--one" />
+        <span className="objective-picture__trace objective-picture__trace--two" />
+      </div>
+      <figcaption>
+        <span>{objectiveLabel} · {motif.label}</span>
+        <strong>{visual.title}</strong>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -826,6 +897,11 @@ export function ActivityView({
     activity.questions ||
     activity.actions;
   const tier = getTier(`tier-${activity.tierNumber}`);
+  const objectiveVisual = getObjectiveVisual(activity);
+  const domainColor =
+    domains.find((domain) => domain.id === activity.domain)?.color ??
+    tier?.color ??
+    "#00d9ff";
   const activityPosition =
     allActivities.findIndex((candidate) => candidate.id === activity.id) + 1;
   const [readingProgress, setReadingProgress] = useState(0);
@@ -833,6 +909,11 @@ export function ActivityView({
   const closeRef = useRef(null);
   useEffect(() => {
     closeRef.current?.focus();
+  }, [activity.id]);
+  useEffect(() => {
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setReadingProgress(0);
   }, [activity.id]);
   const trapFocus = (event) => {
     if (event.key !== "Tab") return;
@@ -917,6 +998,11 @@ export function ActivityView({
           />
         </header>
         <div className="activity-shell">
+          <ObjectivePicture
+            activity={activity}
+            visual={objectiveVisual}
+            color={domainColor}
+          />
           <div className="activity-title">
             <p className="eyebrow">
               Tier {activity.tierNumber} · {activity.difficulty}

@@ -26,7 +26,8 @@ test('dashboard circuitry stays behind the guided journey', async ({ page }) => 
 })
 
 test('Overview gives new learners a clear start card', async ({ page }) => {
-  await expect(page.getByRole('heading',{name:/start at zero and follow the trail/i})).toBeVisible()
+  await expect(page.locator('.start-card--primary')).toBeVisible()
+  await expect(page.locator('.start-card--primary')).toContainText(/start here|keep going|review recommended/i)
   await page.getByRole('button',{name:/open next activity/i}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await expect(page.locator('.activity-title h1')).toContainText(/security controls/i)
@@ -167,16 +168,27 @@ test('Flash Cards sidebar page launches the cumulative shuffled deck', async ({ 
   await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
 })
 
+test('Common Ports sidebar page supports flashcards, matching, and explanations', async ({ page }) => {
+  const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
+  await page.getByRole('button',{name:/Common Ports/i}).click()
+  await expect(page.getByRole('heading',{name:/Build the port-number reflex/i})).toBeVisible()
+  await page.getByRole('button',{name:/Tap to reveal port/i}).click()
+  await expect(page.locator('.matching-columns').getByRole('button',{name:'20/21',exact:true})).toBeVisible()
+  await page.locator('.matching-columns').getByRole('button',{name:/^22$/}).click()
+  await page.locator('.matching-columns').getByRole('button',{name:'SSH/SFTP/SCP',exact:true}).click()
+  await expect(page.getByText(/Matched\. Nice\./i)).toBeVisible()
+  const httpsReference=page.locator('.ports-reference__list').getByRole('button',{name:/443 HTTPS/i})
+  await httpsReference.scrollIntoViewIfNeeded()
+  await httpsReference.click()
+  await expect(page.getByText(/Carries encrypted web traffic using TLS/i)).toBeVisible()
+})
+
 test('value sidebar pages show market and app proof points', async ({ page }) => {
   const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:/why the security\+\?/i}).click()
+  await page.getByRole('button',{name:/why security\+\?/i}).click()
   await expect(page.getByRole('heading',{name:/cybersecurity keeps growing/i})).toBeVisible()
   await expect(page.getByText('$124,910')).toBeVisible()
   await expect(page.getByText(/projected growth/i)).toBeVisible()
-
-  if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:/why choose this app\?/i}).click()
-  await expect(page.getByRole('heading',{name:/security\+ prep without the maze/i})).toBeVisible()
   await expect(page.getByText(/assessment questions with explanations/i)).toBeVisible()
-  await expect(page.getByText(/flashcards in the cumulative deck/i)).toBeVisible()
+  await expect(page.getByText(/practice exams without burying you in extra noise/i)).toBeVisible()
 })

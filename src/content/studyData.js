@@ -180,6 +180,30 @@ for (const tier of [fiveTierCurriculum[0], tier4]) tier.minutes = tier.modules.f
 export const tiers = [...fiveTierCurriculum, createPracticeExamTier(fiveTierCurriculum)]
 export const masterFlashcardsActivity = createMasterFlashcardsActivity(fiveTierCurriculum)
 
+function flashcardsForDomain(domainId) {
+  return fiveTierCurriculum
+    .flatMap((tier) => tier.modules.flatMap((module) => module.activities))
+    .filter((activity) => activity.type === 'flashcards' && activity.domain === domainId)
+    .flatMap((activity) => activity.cards ?? [])
+}
+
+export const flashcardDeckActivities = domains.map((domain) => {
+  const cards = flashcardsForDomain(domain.id)
+  return {
+    id: `flashcards-domain-${domain.id}`,
+    type: 'flashcards',
+    title: `${domain.title} flashcards`,
+    duration: Math.max(10, Math.ceil(cards.length / 2)),
+    required: false,
+    domain: domain.id,
+    objective: domain.short,
+    difficulty: 'synthesis',
+    summary: `Focused recall for ${domain.title.toLowerCase()} terms, decisions, and exam clues.`,
+    cards,
+    shuffleCards: true,
+  }
+})
+
 // Deterministically distribute correct answers without changing question meaning.
 // The stable question id controls rotation so updates do not reshuffle saved content.
 for (const tier of tiers) for (const module of tier.modules) for (const activity of module.activities) for (const question of activity.questions ?? []) {
@@ -193,6 +217,7 @@ for (const tier of tiers) for (const module of tier.modules) for (const activity
 
 export const allActivities = [
   ...tiers.flatMap((tier) => tier.modules.flatMap((module) => module.activities.map((activity) => ({ ...activity, tierId: tier.id, tierNumber: tier.number, moduleId: module.id })))),
+  ...flashcardDeckActivities.map((activity) => ({ ...activity, tierId: 'standalone-flashcards', tierNumber: 'Review', moduleId: 'focused-flashcards-section' })),
   { ...masterFlashcardsActivity, tierId: 'standalone-flashcards', tierNumber: 'Review', moduleId: 'master-flashcards-section' },
 ]
 

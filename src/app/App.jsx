@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Activity,
   ArrowLeft,
   ArrowRight,
   Award,
@@ -17,11 +16,11 @@ import {
   GraduationCap,
   Layers3,
   LayoutDashboard,
-  LockKeyhole,
   Menu,
   Play,
   RotateCcw,
   Search,
+  Server,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -34,6 +33,7 @@ import {
 import {
   allActivities,
   domains,
+  flashcardDeckActivities,
   getActivity,
   getTier,
   masterFlashcardsActivity,
@@ -60,17 +60,42 @@ const primaryNavItems = [
   { id: "path", label: "Learning Path", icon: Layers3 },
   { id: "domains", label: "Exam Domains", icon: BookOpen },
   { id: "flashcards", label: "Flash Cards", icon: Contact },
+  { id: "common-ports", label: "Common Ports", icon: Server },
   { id: "progress", label: "Progress", icon: BarChart3 },
-  { id: "study-guide", label: "How to Use This App", icon: GraduationCap },
-  { id: "developers", label: "Meet the developers", icon: UsersRound },
+  { id: "study-guide", label: "How to Study", icon: GraduationCap },
+  { id: "developers", label: "Meet the Developers", icon: UsersRound },
 ];
 
 const aboutNavItems = [
-  { id: "why-security", label: "Why the Security+?", icon: TrendingUp },
-  { id: "why-app", label: "Why choose this app?", icon: Award },
+  { id: "read-me", label: "Read Me", icon: CircleHelp },
+  { id: "why-security", label: "Why Security+?", icon: TrendingUp },
 ];
 
 const navItems = [...primaryNavItems, ...aboutNavItems];
+
+const commonPorts = [
+  { port: "20/21", protocol: "FTP", transport: "TCP", function: "Transfers files between systems. TCP 21 controls the session, while TCP 20 is traditionally used for active-mode data transfer.", memory: "File Transfer Protocol is old, clear-text, and still shows up in troubleshooting and legacy environments." },
+  { port: "22", protocol: "SSH/SFTP/SCP", transport: "TCP", function: "Provides encrypted remote administration and secure file copy over the same protected channel.", memory: "Think secure shell: if you are safely managing a Linux server remotely, 22 is the usual answer." },
+  { port: "23", protocol: "Telnet", transport: "TCP", function: "Offers remote terminal access without encryption, which makes it unsafe on modern networks.", memory: "Telnet is useful to recognize, but SSH is the safer replacement." },
+  { port: "25", protocol: "SMTP", transport: "TCP", function: "Moves email between mail servers and often handles outbound mail relay.", memory: "SMTP sends mail. Client submission commonly uses 587 instead." },
+  { port: "53", protocol: "DNS", transport: "UDP/TCP", function: "Resolves names to IP addresses. UDP is common for lookups; TCP is used for zone transfers and larger responses.", memory: "When users say 'the internet is down' but IP pings work, DNS on 53 is a prime suspect." },
+  { port: "67/68", protocol: "DHCP", transport: "UDP", function: "Automatically leases IP settings. Servers listen on 67, clients use 68.", memory: "No valid address, gateway, or DNS? Check DHCP before blaming the whole network." },
+  { port: "69", protocol: "TFTP", transport: "UDP", function: "Transfers files with minimal overhead and no built-in authentication, often for network device images or boot files.", memory: "Tiny FTP: simple, fast, and not secure." },
+  { port: "80", protocol: "HTTP", transport: "TCP", function: "Carries unencrypted web traffic.", memory: "HTTP is easy to inspect, which is exactly why sensitive sites should use HTTPS." },
+  { port: "110", protocol: "POP3", transport: "TCP", function: "Downloads mailbox messages from a server to a client.", memory: "POP pulls mail down; IMAP keeps mail synchronized on the server." },
+  { port: "123", protocol: "NTP", transport: "UDP", function: "Synchronizes clocks across clients, servers, logs, and authentication systems.", memory: "Bad time breaks certificates, Kerberos, logs, and incident timelines." },
+  { port: "143", protocol: "IMAP", transport: "TCP", function: "Lets mail clients read and organize messages while keeping them on the server.", memory: "IMAP is usually the better mental model for multi-device mail sync." },
+  { port: "161/162", protocol: "SNMP", transport: "UDP", function: "Collects device telemetry on 161 and receives traps or alerts on 162.", memory: "Monitoring tools ask devices questions on 161; devices shout back alerts on 162." },
+  { port: "389", protocol: "LDAP", transport: "TCP/UDP", function: "Queries directory services for users, groups, devices, and identity attributes.", memory: "LDAP is directory lookup; LDAPS protects it with TLS." },
+  { port: "443", protocol: "HTTPS", transport: "TCP", function: "Carries encrypted web traffic using TLS.", memory: "443 is the default secure web port and a constant firewall/proxy troubleshooting checkpoint." },
+  { port: "445", protocol: "SMB/CIFS", transport: "TCP", function: "Supports Windows file sharing, printer sharing, and many domain file operations.", memory: "File share problems on Windows often lead you to SMB on 445." },
+  { port: "465/587", protocol: "SMTPS/SMTP Submission", transport: "TCP", function: "Secures or submits outbound email from clients and applications.", memory: "587 is the modern client submission port you are most likely to configure." },
+  { port: "514", protocol: "Syslog", transport: "UDP/TCP", function: "Sends event logs from network devices and servers to a collector.", memory: "Central logging turns scattered device events into a timeline." },
+  { port: "636", protocol: "LDAPS", transport: "TCP", function: "Protects LDAP directory queries with TLS encryption.", memory: "LDAPS is LDAP with privacy, especially important for identity traffic." },
+  { port: "993", protocol: "IMAPS", transport: "TCP", function: "Provides IMAP mail access over TLS.", memory: "Secure server-stored mailbox access." },
+  { port: "995", protocol: "POP3S", transport: "TCP", function: "Provides POP3 mail download over TLS.", memory: "Secure mailbox download, less common than IMAPS in many workplaces." },
+  { port: "3389", protocol: "RDP", transport: "TCP/UDP", function: "Provides graphical remote desktop access to Windows systems.", memory: "Useful for administration, risky if exposed directly to the internet." },
+];
 
 const typeLabels = {
   lesson: "Lesson",
@@ -334,15 +359,11 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
   const readiness = getReadiness(progress);
   const recommendation = getRecommendation(progress);
   const next = recommendation.activity;
-  const nextTier = next
-    ? getTier(`tier-${next.tierNumber}`)
-    : tiers[tiers.length - 1];
   const currentTier = currentTierForProgress(
     tiers,
     progress,
     getRecommendation,
   );
-  const currentTierProgress = getTierProgress(currentTier, progress);
   return (
     <div className="page dashboard">
       <div className="circuit-field" aria-hidden="true">
@@ -352,82 +373,49 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           </span>
         ))}
       </div>
-      <section className="hero guided-hero">
-        <div className="hero__grid" />
-        <div className="hero__copy">
-          <span className="status-pill">
-            <i />{" "}
+      <section className="start-card start-card--primary" aria-labelledby="start-card-title">
+        <div className="start-card__icon">
+          <GraduationCap size={24} />
+        </div>
+        <div>
+          <p className="eyebrow">
             {recommendation.review
               ? "Review recommended"
-              : `Tier ${currentTier.number} · ${currentTier.title}`}
-          </span>
-          <p className="eyebrow">Your recommended next step</p>
-          <h2>
-            {next ? next.title : "Journey complete."}
-            <br />
-            <em>
-              {next
-                ? `${next.duration} focused minutes.`
-                : "That deserves a victory lap."}
-            </em>
-          </h2>
+              : progress.completedActivityIds.length
+                ? "Keep going"
+                : "Start here"}
+          </p>
+          <h3 id="start-card-title">
+            {next
+              ? next.title
+              : progress.completedActivityIds.length
+                ? "Journey complete."
+                : "New to cybersecurity? Start at zero and follow the trail."}
+          </h3>
           <p>
             {recommendation.review
               ? `A recent score below 80% suggests a quick review. ${next?.summary}`
-              : (next?.summary ??
-                "Review any tier or take another practice exam whenever you like.")}
+              : next
+                ? next.summary
+                : "Review any tier or take another practice exam whenever you like."}
           </p>
-          <div className="hero__actions">
-            <button
-              className="button button--primary"
-              disabled={!next}
-              onClick={() => next && onOpenActivity(next.id)}
-            >
-              <Play size={17} fill="currentColor" />
-              {recommendation.review
-                ? "Start review"
-                : next
-                  ? "Continue learning"
-                  : "Journey complete"}
-              <ArrowRight size={17} />
-            </button>
-            <button
-              className="button button--ghost"
-              onClick={() => onOpenTier(nextTier.id)}
-            >
-              <Layers3 size={17} />
-              View tier
-            </button>
-          </div>
         </div>
-        <div className="hero__visual">
-          <div className="orbit orbit--one" />
-          <div className="orbit orbit--two" />
-          <div className="readiness">
-            <Ring value={currentTierProgress} size={148} />
-            <span>TIER {currentTier.number} PROGRESS</span>
-          </div>
-          <div className="signal signal--one">
-            <Activity size={14} /> {readiness}% exam ready
-          </div>
-          <div className="signal signal--two">
-            <LockKeyhole size={14} /> Path stays open
-          </div>
-        </div>
+        <button
+          className="button button--primary"
+          disabled={!next}
+          onClick={() => next && onOpenActivity(next.id)}
+        >
+          {recommendation.review
+            ? "Start review"
+            : next
+              ? "Open next activity"
+              : "Journey complete"}
+          <ArrowRight size={16} />
+        </button>
       </section>
-      <section className="stats-row">
+      <section className="stats-row stats-row--trimmed">
         <article>
           <span className="stat-icon stat-icon--green">
-            <Clock3 size={19} />
-          </span>
-          <div>
-            <p>Study time</p>
-            <strong>{progress.totalStudyMinutes} min</strong>
-            <small>saved on this device</small>
-          </div>
-        </article>
-        <article>
-          <span className="stat-icon stat-icon--orange">
             <Target size={19} />
           </span>
           <div>
@@ -437,7 +425,7 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           </div>
         </article>
         <article>
-          <span className="stat-icon stat-icon--blue">
+          <span className="stat-icon stat-icon--orange">
             <Award size={19} />
           </span>
           <div>
@@ -447,7 +435,7 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
           </div>
         </article>
         <article>
-          <span className="stat-icon stat-icon--purple">
+          <span className="stat-icon stat-icon--blue">
             <Gauge size={19} />
           </span>
           <div>
@@ -456,34 +444,6 @@ function Dashboard({ progress, onOpenTier, onOpenActivity, onNavigate }) {
             <small>coverage + accuracy</small>
           </div>
         </article>
-      </section>
-      <section className="start-card" aria-labelledby="start-card-title">
-        <div className="start-card__icon">
-          <GraduationCap size={24} />
-        </div>
-        <div>
-          <p className="eyebrow">
-            {progress.completedActivityIds.length ? "Keep going" : "Start here"}
-          </p>
-          <h3 id="start-card-title">
-            {progress.completedActivityIds.length
-              ? "Your next small win is already picked."
-              : "New to cybersecurity? Start at zero and follow the trail."}
-          </h3>
-          <p>
-            {progress.completedActivityIds.length
-              ? "Use the recommendation to continue in order, then review anything under 80% before moving too far ahead."
-              : "Begin with Tier 1. Each lesson gives you the language, examples, flashcards, checks, and quizzes you need before the app moves you forward."}
-          </p>
-        </div>
-        <button
-          className="button button--primary"
-          disabled={!next}
-          onClick={() => next && onOpenActivity(next.id)}
-        >
-          {next ? "Open next activity" : "Journey complete"}
-          <ArrowRight size={16} />
-        </button>
       </section>
       <div className="guided-layout guided-layout--wide">
         <section className="panel journey-panel">
@@ -919,17 +879,17 @@ function FlashCardsView({ onOpenActivity }) {
             <i /> Cumulative recall
           </span>
           <p className="eyebrow">Flash Cards</p>
-          <h2>Shuffle the whole Security+ deck.</h2>
+          <h2>Study one domain or shuffle everything.</h2>
           <p>
-            This deck pulls every flashcard from every section into one
-            cumulative review set. Each time you open it, the order is shuffled
-            so you practice recall instead of memorizing a sequence.
+            Pick a focused domain deck when you want clean repetition, or use
+            the full deck when you are ready for mixed recall across the whole
+            Security+ map.
           </p>
           <button
             className="button button--primary"
             onClick={() => onOpenActivity(masterFlashcardsActivity.id)}
           >
-            Start shuffled deck <ArrowRight size={16} />
+            Shuffle all cards <ArrowRight size={16} />
           </button>
         </div>
         <div className="flashcards-stat" aria-hidden="true">
@@ -948,6 +908,257 @@ function FlashCardsView({ onOpenActivity }) {
             architecture, operations, and governance.
           </p>
         </div>
+      </section>
+      <section className="flashcards-decks" aria-label="Focused Security+ flashcard decks">
+        {flashcardDeckActivities.map((deck) => {
+          const domain = domains.find((item) => item.id === deck.domain);
+          return (
+            <button
+              key={deck.id}
+              className="flashcards-deck-card"
+              style={{ "--deck": domain?.color }}
+              onClick={() => onOpenActivity(deck.id)}
+            >
+              <span>{domain?.short} · {deck.cards.length} cards</span>
+              <strong>{domain?.title}</strong>
+              <p>{deck.summary}</p>
+              <b>
+                Start deck <ArrowRight size={15} />
+              </b>
+            </button>
+          );
+        })}
+      </section>
+    </div>
+  );
+}
+
+function CommonPortsView() {
+  const [flashIndex, setFlashIndex] = useState(0);
+  const [showFlashAnswer, setShowFlashAnswer] = useState(false);
+  const [selectedPort, setSelectedPort] = useState(null);
+  const [selectedProtocol, setSelectedProtocol] = useState(null);
+  const [matchedPorts, setMatchedPorts] = useState([]);
+  const [openExplanation, setOpenExplanation] = useState(commonPorts[0].port);
+
+  const portOptions = useMemo(() => commonPorts.slice(0, 12), []);
+  const protocolOptions = useMemo(
+    () => [...portOptions].sort((a, b) => a.protocol.localeCompare(b.protocol)),
+    [portOptions],
+  );
+  const currentCard = commonPorts[flashIndex % commonPorts.length];
+  const matchedSet = new Set(matchedPorts);
+  const pendingCorrect =
+    selectedPort &&
+    selectedProtocol &&
+    selectedPort === selectedProtocol &&
+    !matchedSet.has(selectedPort);
+
+  function choosePort(port) {
+    setSelectedPort(port);
+    if (selectedProtocol === port && !matchedSet.has(port)) {
+      setMatchedPorts((ports) => [...ports, port]);
+    }
+  }
+
+  function chooseProtocol(port) {
+    setSelectedProtocol(port);
+    if (selectedPort === port && !matchedSet.has(port)) {
+      setMatchedPorts((ports) => [...ports, port]);
+    }
+  }
+
+  function nextFlashcard() {
+    setShowFlashAnswer(false);
+    setFlashIndex((index) => (index + 1) % commonPorts.length);
+  }
+
+  function resetMatching() {
+    setSelectedPort(null);
+    setSelectedProtocol(null);
+    setMatchedPorts([]);
+  }
+
+  return (
+    <div className="page ports-page">
+      <section className="ports-hero">
+        <div>
+          <span className="status-pill">
+            <i /> Port recall
+          </span>
+          <p className="eyebrow">Common Ports</p>
+          <h2>Build the port-number reflex.</h2>
+          <p>
+            Network+ and Security+ both expect fast recognition of common
+            services, port numbers, transports, and secure replacements. Use
+            this page for short daily reps until the obvious ports feel boring.
+          </p>
+        </div>
+        <div className="ports-hero__stat" aria-hidden="true">
+          <Server size={44} />
+          <strong>{commonPorts.length}</strong>
+          <span>core ports</span>
+        </div>
+      </section>
+
+      <section className="ports-grid">
+        <article className="panel ports-flash">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Flash card</p>
+              <h3>{currentCard.protocol}</h3>
+            </div>
+            <span className="ports-counter">
+              {flashIndex + 1}/{commonPorts.length}
+            </span>
+          </div>
+          <button
+            className={`port-card ${showFlashAnswer ? "port-card--flipped" : ""}`}
+            onClick={() => setShowFlashAnswer((shown) => !shown)}
+            aria-pressed={showFlashAnswer}
+          >
+            <span>{showFlashAnswer ? currentCard.port : "Tap to reveal port"}</span>
+            <strong>{showFlashAnswer ? currentCard.transport : currentCard.protocol}</strong>
+            <em>{showFlashAnswer ? currentCard.memory : "Recall the number and transport first."}</em>
+          </button>
+          <button className="button button--ghost" onClick={nextFlashcard}>
+            Next card <ArrowRight size={16} />
+          </button>
+        </article>
+
+        <article className="panel ports-match">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Matching drill</p>
+              <h3>Pair numbers with services.</h3>
+            </div>
+            <span className="ports-counter">
+              {matchedPorts.length}/{portOptions.length}
+            </span>
+          </div>
+          <div className="matching-columns">
+            <div>
+              <strong>Port</strong>
+              {portOptions.map((item) => (
+                <button
+                  key={item.port}
+                  className={`match-chip ${selectedPort === item.port ? "match-chip--selected" : ""} ${matchedSet.has(item.port) ? "match-chip--matched" : ""}`}
+                  onClick={() => choosePort(item.port)}
+                >
+                  {item.port}
+                </button>
+              ))}
+            </div>
+            <div>
+              <strong>Service</strong>
+              {protocolOptions.map((item) => (
+                <button
+                  key={item.protocol}
+                  className={`match-chip ${selectedProtocol === item.port ? "match-chip--selected" : ""} ${matchedSet.has(item.port) ? "match-chip--matched" : ""}`}
+                  onClick={() => chooseProtocol(item.port)}
+                >
+                  {item.protocol}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="ports-feedback">
+            {pendingCorrect
+              ? "Matched. Nice."
+              : selectedPort && selectedProtocol && selectedPort === selectedProtocol
+                ? "Matched. Nice."
+              : selectedPort && selectedProtocol && selectedPort !== selectedProtocol
+                ? "Not that pair. Check the service function and try again."
+                : "Choose one item from each side."}
+          </div>
+          <button className="button button--ghost" onClick={resetMatching}>
+            <RotateCcw size={16} /> Reset drill
+          </button>
+        </article>
+      </section>
+
+      <section className="panel ports-reference">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Explain the function</p>
+            <h3>What each port is actually doing.</h3>
+          </div>
+        </div>
+        <div className="ports-reference__list">
+          {commonPorts.map((item) => (
+            <article key={item.port} className="port-reference-card">
+              <button
+                onClick={() =>
+                  setOpenExplanation((open) => (open === item.port ? null : item.port))
+                }
+                aria-expanded={openExplanation === item.port}
+              >
+                <span>{item.port}</span>
+                <strong>{item.protocol}</strong>
+                <em>{item.transport}</em>
+                <CircleHelp size={17} />
+              </button>
+              {openExplanation === item.port && (
+                <p>
+                  {item.function} <b>Memory hook:</b> {item.memory}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ReadMeView() {
+  const notes = [
+    {
+      title: "Independent study resource",
+      body:
+        "This app is not an official course and is not affiliated with, endorsed by, sponsored by, or approved by CompTIA or any other certification provider.",
+    },
+    {
+      title: "No pass guarantee",
+      body:
+        "Using this app does not guarantee that you will pass any certification exam. Exam readiness depends on your study time, background, practice, and the current official exam objectives.",
+    },
+    {
+      title: "Original practice content",
+      body:
+        "Practice questions, simulations, flashcards, and explanations are original learning materials. They are not real exam questions, brain dumps, or copied exam content.",
+    },
+    {
+      title: "Trademarks",
+      body:
+        "CompTIA, A+, Network+, Security+, and related marks are trademarks of their respective owners. Names are used only to identify the certification topics the app helps learners study.",
+    },
+    {
+      title: "Educational use",
+      body:
+        "Content is provided for educational purposes only. Always compare your preparation against the latest official objectives and policies from the certification provider.",
+    },
+  ];
+  return (
+    <div className="page readme-page">
+      <section className="readme-hero">
+        <p className="eyebrow">Read Me</p>
+        <h2>Important notes before using this study app.</h2>
+        <p>
+          This page explains what the app is, what it is not, and how official
+          certification names are used.
+        </p>
+      </section>
+      <section className="readme-list">
+        {notes.map((note) => (
+          <article key={note.title} className="panel readme-card">
+            <CircleHelp size={20} />
+            <div>
+              <h3>{note.title}</h3>
+              <p>{note.body}</p>
+            </div>
+          </article>
+        ))}
       </section>
     </div>
   );
@@ -1196,10 +1407,12 @@ function MeetDevelopersView() {
 }
 
 function WhySecurityView() {
+  const questionCount = allActivities.flatMap((activity) => activity.questions ?? []).length;
   const marketStats = [
     { value: "29%", label: "projected growth for information security analysts, 2024–2034" },
     { value: "$124,910", label: "2024 median annual pay for information security analysts" },
-    { value: "1", label: "vendor-neutral certification that validates security foundations" },
+    { value: tiers.length, label: "guided tiers from foundations to practice exam" },
+    { value: questionCount, label: "assessment questions with explanations" },
   ];
   return (
     <div className="page info-page">
@@ -1220,70 +1433,13 @@ function WhySecurityView() {
           </p>
         </div>
         <div className="info-stat-card">
-          <TrendingUp size={42} />
-          <strong>29%</strong>
-          <span>projected job growth</span>
-        </div>
-      </section>
-      <div className="info-stat-grid">
-        {marketStats.map((stat) => (
-          <article key={stat.value} className="panel info-stat">
-            <strong>{stat.value}</strong>
-            <span>{stat.label}</span>
-          </article>
-        ))}
-      </div>
-      <section className="panel info-copy">
-        <h3>Why it matters for new learners</h3>
-        <p>
-          Security+ can help a learner show baseline readiness for analyst,
-          help desk, systems, network, cloud, compliance, and junior security
-          roles. It does not replace hands-on experience, but it gives hiring
-          teams a recognizable signal that you can reason about security
-          fundamentals across technical and business contexts.
-        </p>
-        <small>
-          Labor-market figures reference the U.S. Bureau of Labor Statistics
-          Occupational Outlook Handbook for Information Security Analysts.
-        </small>
-      </section>
-    </div>
-  );
-}
-
-function WhyChooseAppView() {
-  const questionCount = allActivities.flatMap((activity) => activity.questions ?? []).length;
-  const appStats = [
-    { value: tiers.length, label: "guided tiers from foundations to practice exam" },
-    { value: allActivities.length, label: "learning activities, labs, checks, quizzes, and exams" },
-    { value: questionCount, label: "assessment questions with explanations" },
-    { value: masterFlashcardsActivity.cards.length, label: "flashcards in the cumulative deck" },
-  ];
-  return (
-    <div className="page info-page">
-      <section className="info-hero info-hero--app">
-        <div>
-          <span className="status-pill">
-            <i /> Built for momentum
-          </span>
-          <p className="eyebrow">Why choose this app?</p>
-          <h2>Security+ prep without the maze.</h2>
-          <p>
-            Sec+ Field Guide gives you a clear path, focused lessons, realistic
-            scenarios, coached checks, cumulative review, and practice exams
-            without burying you in fluff. It is designed to help you learn the
-            objective, practice the decision, test the concept, and immediately
-            know what to review next.
-          </p>
-        </div>
-        <div className="info-stat-card">
           <Award size={42} />
           <strong>{questionCount}</strong>
           <span>questions with explanations</span>
         </div>
       </section>
       <div className="info-stat-grid">
-        {appStats.map((stat) => (
+        {marketStats.map((stat) => (
           <article key={stat.label} className="panel info-stat">
             <strong>{stat.value}</strong>
             <span>{stat.label}</span>
@@ -1291,15 +1447,21 @@ function WhyChooseAppView() {
         ))}
       </div>
       <section className="panel info-copy">
-        <h3>What we offer</h3>
+        <h3>Why it matters, and why this app is shaped this way</h3>
         <p>
-          You get a zero-to-Security+ learning path, original questions,
-          shuffled flashcards, practice and exam modes, objective-based
-          remediation, progress tracking, mobile-friendly layouts, and a simple
-          interface that keeps the next step obvious. The goal is clarity:
-          learn what matters, practice it often, and remove unnecessary noise
-          from the cybersecurity learning process.
+          Security+ can help a learner show baseline readiness for analyst,
+          help desk, systems, network, cloud, compliance, and junior security
+          roles. It does not replace hands-on experience, but it gives hiring
+          teams a recognizable signal that you can reason about security
+          fundamentals across technical and business contexts. Sec+ Field Guide
+          supports that goal with a clear path, focused lessons, realistic
+          scenarios, coached checks, cumulative review, objective-based
+          remediation, and practice exams without burying you in extra noise.
         </p>
+        <small>
+          Labor-market figures reference the U.S. Bureau of Labor Statistics
+          Occupational Outlook Handbook for Information Security Analysts.
+        </small>
       </section>
     </div>
   );
@@ -1637,29 +1799,15 @@ function ActivityView({ activity, progress, onClose, onComplete }) {
   );
 }
 
-function CompletionToast({ activity, nextActivity, onClose, onOpenNext }) {
+function CompletionToast({ onClose }) {
   return (
     <div className="completion-toast" role="status">
       <span>
         <Check size={18} />
       </span>
       <div>
-        <strong>
-          {activity.type === "checkpoint"
-            ? "Tier checkpoint complete!"
-            : "Saved. Nice work."}
-        </strong>
-        <small>
-          {nextActivity
-            ? `Up next: ${nextActivity.title}`
-            : `${activity.title} · journey complete.`}
-        </small>
+        <strong>Saved</strong>
       </div>
-      {nextActivity && (
-        <button className="toast-next" onClick={onOpenNext}>
-          Open next <ArrowRight size={14} />
-        </button>
-      )}
       <button className="toast-close" onClick={onClose} aria-label="Dismiss">
         <X size={16} />
       </button>
@@ -1838,13 +1986,21 @@ export default function App() {
         {active === "flashcards" && (
           <FlashCardsView onOpenActivity={openActivity} />
         )}
+        {active === "common-ports" && <CommonPortsView />}
         {active === "progress" && (
           <ProgressView progress={progress} />
         )}
         {active === "study-guide" && <StudyGuideView />}
         {active === "developers" && <MeetDevelopersView />}
+        {active === "read-me" && <ReadMeView />}
         {active === "why-security" && <WhySecurityView />}
-        {active === "why-app" && <WhyChooseAppView />}
+        <footer className="legal-disclaimer">
+          This app is an independent study resource and is not affiliated with,
+          endorsed by, sponsored by, or approved by CompTIA or any other
+          certification provider. CompTIA, A+, Network+, Security+, and related
+          marks are trademarks of their respective owners. All content is
+          original and provided for educational purposes only.
+        </footer>
       </main>
       {showWelcome && (
         <Onboarding

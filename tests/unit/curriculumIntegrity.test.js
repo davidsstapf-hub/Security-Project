@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { allActivities, tiers } from '../../src/content/studyData.js'
+import { allActivities, flashcardDeckActivities, tiers } from '../../src/content/studyData.js'
 import { buildTraceabilityMatrix, curriculumMetadata, objectiveHasCurriculumCoverage, officialObjectiveCodes } from '../../src/content/curriculumMetadata.js'
 
 test('objective verification is an explicit release gate', () => {
@@ -109,6 +109,27 @@ test('standalone master flash cards aggregate every section deck and shuffle on 
   assert.equal(master.tierNumber, 'Review')
   assert.equal(master.cards.length, sourceCards.length)
   assert.ok(master.cards.length > 250)
+})
+
+test('standalone flash cards are also split into five focused domain decks', () => {
+  const sourceCards = tiers
+    .filter((tier) => tier.number < 6)
+    .flatMap((tier) => tier.modules.flatMap((module) => module.activities))
+    .filter((activity) => activity.type === 'flashcards')
+    .flatMap((activity) => activity.cards.map((card) => ({ card, domain: activity.domain })))
+
+  assert.equal(flashcardDeckActivities.length, 5)
+  assert.deepEqual(new Set(flashcardDeckActivities.map((deck) => deck.domain)), new Set([1,2,3,4,5]))
+  assert.equal(flashcardDeckActivities.reduce((sum, deck) => sum + deck.cards.length, 0), sourceCards.length)
+
+  for (const deck of flashcardDeckActivities) {
+    const expectedCount = sourceCards.filter((item) => item.domain === deck.domain).length
+    assert.equal(deck.type, 'flashcards', deck.id)
+    assert.equal(deck.required, false, deck.id)
+    assert.equal(deck.shuffleCards, true, deck.id)
+    assert.equal(deck.cards.length, expectedCount, deck.id)
+    assert.equal(allActivities.some((activity) => activity.id === deck.id && activity.moduleId === 'focused-flashcards-section'), true, deck.id)
+  }
 })
 
 test('Tier 2 scenarios use distinct evidence and decisions', () => {
