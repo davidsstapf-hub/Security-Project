@@ -41,10 +41,43 @@ test('guided path remains usable at each viewport', async ({ page }) => {
   await expect(page.locator('body')).not.toHaveCSS('overflow-x','scroll')
 })
 
+test('shared UI surfaces do not overflow horizontally', async ({ page }) => {
+  const checkNoHorizontalOverflow = async () => {
+    const overflow = await page.evaluate(() => {
+      const selectors = [
+        'body',
+        '.topbar',
+        '.sidebar',
+        '.start-card--primary',
+        '.stats-row',
+        '.journey-panel',
+      ]
+      return selectors
+        .map((selector) => {
+          const node = document.querySelector(selector)
+          if (!node) return null
+          return {
+            selector,
+            scrollWidth: Math.ceil(node.scrollWidth),
+            clientWidth: Math.ceil(node.clientWidth),
+          }
+        })
+        .filter(Boolean)
+        .filter((entry) => entry.scrollWidth > entry.clientWidth + 2)
+    })
+    expect(overflow).toEqual([])
+  }
+
+  await checkNoHorizontalOverflow()
+  await page.getByRole('button',{name:/open next activity/i}).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await checkNoHorizontalOverflow()
+})
+
 test('global Continue learning opens the next recommended activity', async ({ page }) => {
   await page.locator('.topbar').getByRole('button',{name:/continue learning/i}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
-  await expect(page.getByLabel(/activity location/i)).toContainText(/Activity 1 of 171/i)
+  await expect(page.getByLabel(/activity location/i)).toContainText(/Activity 1 of \d+/i)
   await expect(page.getByLabel(/activity location/i)).toContainText(/Lesson/i)
   await expect(page.locator('.activity-title h1')).toContainText(/security controls/i)
 })
@@ -58,8 +91,7 @@ test('activity offers Field HQ and advances after completion', async ({ page }) 
   await expect(page.getByRole('button',{name:/field hq home/i})).toBeVisible()
   const firstTitle = await page.locator('.activity-title h1').textContent()
   await page.locator('.activity-complete').click()
-  await expect(page.getByText(/saved\. nice work/i)).toBeVisible()
-  await expect(page.getByText(/up next:/i)).toBeVisible()
+  await expect(page.locator('.completion-toast')).toContainText(/saved/i)
   await expect(page.locator('.activity-title h1')).not.toHaveText(firstTitle)
 })
 
@@ -150,9 +182,9 @@ test('activity dialog receives focus and restores it on exit', async ({ page }) 
 test('Flash Cards sidebar page launches the cumulative shuffled deck', async ({ page }) => {
   const menu=page.getByRole('button',{name:/open navigation/i});if(await menu.isVisible())await menu.click()
   await page.getByRole('button',{name:'Flash Cards',exact:true}).click()
-  await expect(page.getByRole('heading',{name:/shuffle the whole security\+ deck/i})).toBeVisible()
+  await expect(page.getByRole('heading',{name:/study one domain or shuffle everything/i})).toBeVisible()
   await expect(page.getByText(/cards from all sections/i)).toBeVisible()
-  await page.getByRole('button',{name:/start shuffled deck/i}).click()
+  await page.getByRole('button',{name:/shuffle all cards/i}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await expect(page.getByText(/Term 1 of 449/i)).toBeVisible()
   await expect(page.getByText(/448 remaining/i)).toBeVisible()

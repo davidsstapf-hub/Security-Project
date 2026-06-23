@@ -293,31 +293,31 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--green); out
 .learning-objectives { margin: 8px 0 54px; padding: 19px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; }
 .lesson-body { display: block; }
 .lesson-body .lesson-section { padding: 0; margin: 0 0 54px; display: grid; grid-template-columns: 38px minmax(0,1fr); gap: 18px; border: 0; border-radius: 0; background: transparent; }
-.lesson-section__number { padding-top: 9px; color: var(--green); font: 600 9px 'DM Mono',monospace; }
+.lesson-section__number { padding-top: 9px; color: var(--green); font: 600 15px 'DM Mono',monospace; }
 .lesson-body .lesson-section h2 { margin: 0 0 16px; color: #f1f8fb; font-size: clamp(24px,3.5vw,34px); line-height: 1.18; letter-spacing: -.045em; }
-.lesson-body .lesson-section p { margin: 0; color: #c4d5db; font-size: 15px; line-height: 1.9; letter-spacing: -.01em; }
+.lesson-body .lesson-section p { margin: 0; color: #c4d5db; font-size: 22px; line-height: 1.75; letter-spacing: 0; }
 .inline-check { margin: 38px 0 4px; padding: 25px; border: 1px solid rgba(0,217,255,.23); border-radius: 14px; background: linear-gradient(145deg,rgba(0,217,255,.055),rgba(8,123,255,.025)); }
-.inline-check h3 { margin: 0 0 18px; font-size: 17px; line-height: 1.5; }
+.inline-check h3 { margin: 0 0 18px; font-size: 24px; line-height: 1.35; }
 .inline-check > div { display: grid; gap: 8px; }
-.inline-check button { min-height: 48px; padding: 9px 12px; display: flex; align-items: center; gap: 11px; border: 1px solid var(--line); border-radius: 9px; color: #c5d7dd; background: rgba(255,255,255,.018); text-align: left; cursor: pointer; font-size: 11px; }
+.inline-check button { min-height: 56px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 9px; color: #c5d7dd; background: rgba(255,255,255,.018); text-align: left; cursor: pointer; font-size: 22px; line-height: 1.45; }
 .inline-check button:hover { border-color: rgba(0,217,255,.4); }
-.inline-check button > span { width: 27px; height: 27px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 7px; color: var(--muted); background: rgba(255,255,255,.05); font: 500 9px 'DM Mono',monospace; }
+.inline-check button > span { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 7px; color: var(--muted); background: rgba(255,255,255,.05); font: 500 16px 'DM Mono',monospace; }
 .inline-check button > svg { margin-left: auto; color: var(--green); }
 .inline-check button.correct { border-color: rgba(0,217,255,.5); background: rgba(0,217,255,.08); }
 .inline-check button.correct > span { color: #031019; background: var(--green); }
 .inline-check button.wrong { border-color: rgba(255,124,137,.42); background: rgba(255,124,137,.055); }
-.lesson-body .inline-check__explanation { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); color: #97b2bc; font-size: 11px; line-height: 1.65; }
+.lesson-body .inline-check__explanation { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); color: #97b2bc; font-size: 22px; line-height: 1.65; }
 .inline-check__explanation strong { color: var(--green); }
 .key-idea { margin: 12px 0 30px; }
 
 /* Lesson pages intentionally avoid card containers. */
 .learning-objectives { padding: 0; margin: 18px 0 62px; border: 0; background: transparent; }
 .learning-objectives .eyebrow { margin-bottom: 13px; }
-.learning-objectives span { margin-bottom: 8px; font-size: 11px; }
+.learning-objectives span { margin-bottom: 8px; font-size: 21px; }
 .lesson-section__content { min-width: 0; width: 100%; }
 .lesson-media { margin: 30px 0 56px; }
 .lesson-media img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 16px; border: 1px solid rgba(0,217,255,.22); box-shadow: 0 24px 70px rgba(0,0,0,.32); }
-.lesson-media figcaption { margin-top: 11px; color: #7896a1; font-size: 9px; line-height: 1.55; }
+.lesson-media figcaption { margin-top: 11px; color: #7896a1; font-size: 18px; line-height: 1.55; }
 .lesson-body .lesson-section { border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
 .lesson-body .lesson-section h2 { max-width: 100%; overflow-wrap: anywhere; }
 .key-idea { padding: 8px 0 8px 18px; border: 0; border-left: 2px solid var(--green); border-radius: 0; background: transparent; }
@@ -508,18 +508,18 @@ button:disabled { cursor:not-allowed; opacity:.5; }.sr-only { position:absolute;
 .button { font-size:16px; }
 .sidebar__mission strong,.profile strong,.path-summary span strong { font-size:17px; }
 .sidebar__mission>span,.profile span,.hero__copy>p:not(.eyebrow),.page-intro p:not(.eyebrow),.tier-banner>div>p:not(.eyebrow) { font-size:19px; }
-.eyebrow,.status-pill,.nav__badge,.text-button,.back-button,.trend-up,.quiz-head span,.activity-header__type,.lesson-objective span,.activity-status,.tier-bars span b,.tier-bars>div>strong,.domain-row__progress,.domain-card small,.domain-card__bottom strong,.topic-chips b,.practice-feature>div span,.exam-mode-picker button b,.search-tier>header span,.search-module button span { font-size:14px; }
-.stats-row p,.stats-row small,.domain-row__name small,.weight-key,.domain-card p,.topic-chips span,.tier-node__copy em,.path-summary span small,.guidance-note span,.activity-copy small,.activity-time,.preview-badge,.quiz-footer>span,.results-score span,.welcome-card>small,.welcome-tiers span,.flashcard span,.flashcard small,.completion-toast small,.lesson-media figcaption,.resources-disclosure { font-size:16px; }
-.domain-row__name strong,.challenge-card>p:not(.eyebrow),.domain-detail p:not(.eyebrow),.practice-feature p,.practice-option p:not(.eyebrow),.mastery-panel>p:not(.eyebrow),.guidance-note strong,.module-heading p:not(.eyebrow),.activity-copy em,.learning-objectives span,.key-idea strong,.key-idea p,.explanation strong,.explanation p,.reassurance-card>p:not(.eyebrow),.study-method-grid article>p:not(.eyebrow),.study-rhythm li span,.study-disclaimer p,.additional-resources>div>p:not(.eyebrow),.exam-status span,.search-module button small { font-size:19px; }
-.activity-copy strong,.path-summary span strong,.exam-mode-picker>p:not(.eyebrow),.exam-mode-picker button span,.scenario-brief>p:not(.eyebrow),.scenario-hints p,.scenario-evidence,.scenario-hints,.activity-instruction,.inline-check button,.lesson-body .inline-check__explanation { font-size:20px; }
-.answer { font-size:20px; line-height:1.5; }
-.lesson-body section p { font-size:20px; }
+.eyebrow,.status-pill,.nav__badge,.text-button,.back-button,.trend-up,.quiz-head span,.activity-header__type,.lesson-objective span,.activity-status,.tier-bars span b,.tier-bars>div>strong,.domain-row__progress,.domain-card small,.domain-card__bottom strong,.topic-chips b,.practice-feature>div span,.exam-mode-picker button b,.search-tier>header span,.search-module button span { font-size:15px; }
+.stats-row p,.stats-row small,.domain-row__name small,.weight-key,.domain-card p,.topic-chips span,.tier-node__copy em,.path-summary span small,.guidance-note span,.activity-copy small,.activity-time,.preview-badge,.quiz-footer>span,.results-score span,.welcome-card>small,.welcome-tiers span,.flashcard span,.flashcard small,.completion-toast small,.lesson-media figcaption,.resources-disclosure { font-size:18px; }
+.domain-row__name strong,.challenge-card>p:not(.eyebrow),.domain-detail p:not(.eyebrow),.practice-feature p,.practice-option p:not(.eyebrow),.mastery-panel>p:not(.eyebrow),.guidance-note strong,.module-heading p:not(.eyebrow),.activity-copy em,.learning-objectives span,.key-idea strong,.key-idea p,.explanation strong,.explanation p,.reassurance-card>p:not(.eyebrow),.study-method-grid article>p:not(.eyebrow),.study-rhythm li span,.study-disclaimer p,.additional-resources>div>p:not(.eyebrow),.exam-status span,.search-module button small { font-size:21px; }
+.activity-copy strong,.path-summary span strong,.exam-mode-picker>p:not(.eyebrow),.exam-mode-picker button span,.scenario-brief>p:not(.eyebrow),.scenario-hints p,.scenario-evidence,.scenario-hints,.activity-instruction,.inline-check button,.lesson-body .inline-check__explanation { font-size:22px; }
+.answer { font-size:22px; line-height:1.5; }
+.lesson-body section p { font-size:22px; }
 
 @media(max-width:560px){
   .nav__item { font-size:18px; }
-  .activity-copy strong { font-size:20px; }
-  .activity-copy em { font-size:19px; }
-  .answer { font-size:20px; }
+  .activity-copy strong { font-size:21px; }
+  .activity-copy em { font-size:20px; }
+  .answer { font-size:22px; }
 }
 
 /* 2026 interface polish: calmer hierarchy, clearer action states, richer depth. */
@@ -1021,13 +1021,13 @@ body {
 .objective-visual::before { content:""; position:absolute; inset:0; opacity:.52; background: radial-gradient(circle at 18% 16%,rgba(0,217,255,.22),transparent 26%), radial-gradient(circle at 86% 20%,rgba(124,92,255,.18),transparent 28%), linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size: auto,auto,44px 44px,44px 44px; pointer-events:none; }
 .objective-visual__header, .objective-visual__diagram { position: relative; z-index: 1; }
 .objective-visual__header { display:grid; gap:8px; max-width: 650px; }
-.objective-visual__header h2 { margin:0; color:#f4fbff; font-size: clamp(22px,3vw,31px); line-height:1.1; letter-spacing:-.045em; }
-.objective-visual__header p { margin:0; color:#a8c0c9; font-size:13px; line-height:1.65; }
+.objective-visual__header h2 { margin:0; color:#f4fbff; font-size: clamp(30px,3vw,40px); line-height:1.1; letter-spacing:-.045em; }
+.objective-visual__header p { margin:0; color:#a8c0c9; font-size:21px; line-height:1.55; }
 .objective-visual__diagram { margin-top:20px; display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
-.objective-visual__node { min-height:112px; padding:15px; display:flex; flex-direction:column; justify-content:space-between; gap:12px; border:1px solid rgba(139,231,255,.18); border-radius:16px; background: rgba(3,13,17,.72); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
-.objective-visual__node b { color:#eafaff; font-size:13px; line-height:1.2; letter-spacing:-.015em; }
-.objective-visual__node span { color:#8fb0bb; font-size:11px; line-height:1.45; }
-.objective-visual__node::before { content: counter(step); counter-increment: step; width:28px; height:28px; display:grid; place-items:center; border-radius:10px; color:#051014; background: var(--green); font:700 12px 'DM Mono',monospace; box-shadow:0 0 24px rgba(0,217,255,.24); }
+.objective-visual__node { min-height:172px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; gap:16px; border:1px solid rgba(139,231,255,.18); border-radius:16px; background: rgba(3,13,17,.72); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+.objective-visual__node b { color:#eafaff; font-size:21px; line-height:1.25; letter-spacing:0; }
+.objective-visual__node span { color:#8fb0bb; font-size:19px; line-height:1.45; }
+.objective-visual__node::before { content: counter(step); counter-increment: step; width:36px; height:36px; display:grid; place-items:center; border-radius:10px; color:#051014; background: var(--green); font:700 16px 'DM Mono',monospace; box-shadow:0 0 24px rgba(0,217,255,.24); }
 .objective-visual__diagram { counter-reset: step; }
 .objective-visual--triad .objective-visual__diagram { grid-template-columns: repeat(4,minmax(0,1fr)); }
 .objective-visual--flow .objective-visual__node, .objective-visual--attack .objective-visual__node, .objective-visual--timeline .objective-visual__node, .objective-visual--signal .objective-visual__node { position:relative; }
@@ -1294,5 +1294,123 @@ body {
     min-height: 132px;
     border-left: 0;
     border-top: 1px solid color-mix(in srgb, var(--objective-color), transparent 78%);
+  }
+}
+
+/* Shared learning-readiness layer: readable lessons without dense UI overflow. */
+:root {
+  --learn-body: clamp(17px, 1.25vw, 20px);
+  --learn-support: clamp(15px, 1vw, 18px);
+  --learn-small: clamp(12px, .82vw, 15px);
+  --learn-heading: clamp(25px, 3vw, 36px);
+}
+
+.lesson-body .lesson-section p,
+.lesson-body section p,
+.key-idea p,
+.explanation p,
+.scenario-brief > p:not(.eyebrow),
+.scenario-hints p,
+.scenario-evidence,
+.activity-instruction,
+.lesson-body .inline-check__explanation {
+  font-size: var(--learn-body);
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+
+.lesson-body .lesson-section h2,
+.objective-visual__header h2,
+.objective-picture figcaption strong {
+  font-size: var(--learn-heading);
+  line-height: 1.16;
+  letter-spacing: -.025em;
+}
+
+.learning-objectives span,
+.inline-check button,
+.answer,
+.objective-visual__node b {
+  font-size: var(--learn-support);
+  line-height: 1.45;
+}
+
+.objective-visual__header p,
+.objective-visual__node span,
+.objective-picture figcaption p,
+.lesson-media figcaption,
+.activity-copy em,
+.activity-copy small,
+.flashcard span,
+.flashcard small,
+.search-module button small {
+  font-size: var(--learn-small);
+  line-height: 1.55;
+}
+
+.start-card,
+.stats-row article,
+.tier-node,
+.activity-row,
+.domain-row,
+.ports-reference__list button,
+.answer,
+.inline-check button,
+.objective-visual__node {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stats-row p,
+.stats-row small,
+.domain-row__name small,
+.tier-node__copy em,
+.activity-time,
+.preview-badge,
+.results-score span,
+.resources-disclosure,
+.ports-counter,
+.ports-feedback {
+  font-size: var(--learn-small);
+  line-height: 1.45;
+}
+
+.objective-visual__node {
+  min-height: 132px;
+  padding: clamp(16px, 2vw, 22px);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --learn-body: 18px;
+    --learn-support: 17px;
+    --learn-small: 13px;
+    --learn-heading: clamp(24px, 7vw, 32px);
+  }
+
+  .objective-visual__diagram {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-body .lesson-section {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .lesson-section__number {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  :root {
+    --learn-body: 17px;
+    --learn-support: 16px;
+    --learn-small: 12px;
+  }
+
+  .answer,
+  .inline-check button {
+    min-height: 48px;
   }
 }
